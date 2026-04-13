@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CrisisSense AI</title>
+</head>
+<body>
+
+    <h2>Emergency Analyzer</h2>
+
+    <input type="text" id="inputText" placeholder="Enter message" />
+    <button onclick="sendData()">Analyze</button>
+
+    <h3>Output:</h3>
+    <pre id="output"></pre>
+
+    <script>
+        function sendData() {
+            let text = document.getElementById("inputText").value;
+
+            fetch("http://127.0.0.1:5000/analyze", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ text: text })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("FULL RESPONSE:", data);
+
+                // ✅ Safe handling
+                if (data.output) {
+                    document.getElementById("output").innerText = data.output;
+                } else if (data.error) {
+                    document.getElementById("output").innerText = "Error: " + data.error;
+                } else {
+                    document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+                }
+            })
+            .catch(error => {
+                document.getElementById("output").innerText = "Request failed: " + error;
+            });
+        }
+    </script>
+
+</body>
+</html>
