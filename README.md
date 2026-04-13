@@ -1,4 +1,6 @@
 **🚨 CrisisSense AI**
+## 🚀 Live Demo
+(Localhost for now — deployment coming soon)
 
 🟢 Problem
 In emergencies, people communicate in unstructured and multilingual ways, causing delays and confusion in response.
