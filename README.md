@@ -1,33 +1,43 @@
-## 🚨 CrisisSense AI
-## 🚀 Live Demo
-(Localhost for now — deployment coming soon)
+# 🚨 CrisisSense AI
 
-## 🟢 Problem
-In emergencies, people communicate in unstructured and multilingual ways, causing delays and confusion in response.
+AI-powered emergency analyzer that detects and structures crisis messages in real-time.
 
-## 🟢 Solution
-CrisisSense AI is a lightweight emergency response system that converts user input (text/voice/gesture) into structured information:
-- Emergency Type
-- Urgency Level
-- Panic Level
+## 🔹 Features
+- Emergency Type Detection (Fire, Medical, Security)
+- Urgency & Panic Level Analysis
+- AI-powered (Groq - LLaMA 3.3)
+- Fallback system (always works)
+- Simulated reporting system
 
-## 🟢 Features
-- Multilingual input (Hindi, Hinglish, English)
-- Voice input (Web Speech API)
-- Quick emergency buttons
-- Real-time analysis
-
-## 🟢 Tech Stack
-- Frontend: HTML, CSS, JavaScript
+## 🔹 Tech Stack
+- Frontend: HTML, JavaScript
 - Backend: Flask (Python)
-- AI Logic: NLP-based classification (NNDL-inspired)
+- AI: Groq API (LLaMA 3.3)
 
-## 🟢 How to Run
-1. Go to backend folder
-2. Run: python app.py
-3. Open frontend/index.html
+## 🔹 Setup
 
-## 🟢 Future Scope
-- Real AI model integration
-- Cloud deployment
-- Database storage
+1. Install dependencies:
+pip install flask flask-cors groq
+
+2. Set API key:
+Windows:
+set GROQ_API_KEY=your_key_here
+
+3. Run backend:
+python app.py
+
+4. Open frontend:
+Open index.html in browser
+
+## 🔹 Example
+
+Input:
+fire in kitchen help
+
+Output:
+Type: Fire  
+Urgency: High  
+Panic Level: High  
+
+## 🔹 Note
+This is a prototype demonstrating AI-based crisis detection and reporting.
