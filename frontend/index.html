@@ -1,47 +1,420 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>CrisisSense AI</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 36px 32px;
+            width: 100%;
+            max-width: 580px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+        }
+
+        /* ── Header ── */
+        h2 {
+            font-size: 26px;
+            color: #c0392b;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #999;
+            font-size: 13px;
+            margin-bottom: 28px;
+        }
+
+        /* ── Quick Action Buttons ── */
+        .quick-label {
+            font-size: 12px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .quick-btns {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .quick-btn {
+            flex: 1;
+            padding: 9px 6px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quick-btn.fire   { background: #fff3f3; color: #c0392b; border-color: #f5b7b1; }
+        .quick-btn.medical{ background: #f3fff8; color: #1e8449; border-color: #a9dfbf; }
+        .quick-btn.security{background: #f3f6ff; color: #1a5276; border-color: #a9c4e4; }
+        .quick-btn:hover  { opacity: 0.75; }
+
+        /* ── Input ── */
+        input[type="text"] {
+            width: 100%;
+            padding: 13px 16px;
+            font-size: 15px;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            transition: border 0.2s;
+        }
+        input[type="text"]:focus { border-color: #c0392b; }
+
+        /* ── Analyze Button ── */
+        #analyzeBtn {
+            width: 100%;
+            margin-top: 12px;
+            padding: 13px;
+            background: #c0392b;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #analyzeBtn:hover    { background: #a93226; }
+        #analyzeBtn:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* ── Loader ── */
+        .loader {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-top: 16px;
+            display: none;
+        }
+
+        /* ── Error ── */
+        .error-text {
+            color: #c0392b;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+            min-height: 20px;
+        }
+
+        /* ── Output Box ── */
+        .output-box {
+            margin-top: 24px;
+            border-radius: 12px;
+            overflow: hidden;
+            display: none;
+            border: 1px solid #eee;
+        }
+        .output-header {
+            background: #c0392b;
+            color: white;
+            padding: 10px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .output-body {
+            background: #fafafa;
+            padding: 20px 18px;
+        }
+
+        /* ── Structured result cards ── */
+        .result-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .result-row .label { color: #555; }
+        .result-row .value {
+            font-weight: 700;
+            font-size: 14px;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+        .row-type     { background: #fdecea; }
+        .row-urgency  { background: #fef9e7; }
+        .row-panic    { background: #f4ecf7; }
+        .val-high     { background: #fadbd8; color: #922b21; }
+        .val-medium   { background: #fdebd0; color: #784212; }
+        .val-low      { background: #d5f5e3; color: #1e8449; }
+        .val-default  { background: #eaf2ff; color: #1a5276; }
+
+        .action-box {
+            margin-top: 4px;
+            background: #eafaf1;
+            border-left: 4px solid #27ae60;
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-size: 14px;
+            color: #1e8449;
+            line-height: 1.6;
+        }
+        .action-label {
+            font-weight: 700;
+            margin-bottom: 4px;
+            font-size: 13px;
+            color: #145a32;
+        }
+
+        /* ── Reports Section ── */
+        .reports-toggle {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .reports-toggle button {
+            background: none;
+            border: 1.5px solid #c0392b;
+            color: #c0392b;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .reports-toggle button:hover { background: #c0392b; color: white; }
+
+        .reports-box {
+            margin-top: 16px;
+            display: none;
+        }
+        .reports-box h3 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #aaa;
+            margin-bottom: 12px;
+        }
+        .report-card {
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #444;
+            line-height: 1.7;
+        }
+        .report-card strong { color: #2c3e50; }
+        .report-card .ts   { color: #bbb; font-size: 11px; float: right; }
+    </style>
 </head>
 <body>
+<div class="container">
 
-    <h2>Emergency Analyzer</h2>
+    <h2>🚨 CrisisSense AI</h2>
+    <p class="subtitle">Detect emergencies · Analyze severity · Coordinate response</p>
 
-    <input type="text" id="inputText" placeholder="Enter message" />
-    <button onclick="sendData()">Analyze</button>
+    <!-- Quick Action Buttons -->
+    <p class="quick-label">Quick Select</p>
+    <div class="quick-btns">
+        <button class="quick-btn fire"     onclick="quickFill('fire in building')">🔥 Fire</button>
+        <button class="quick-btn medical"  onclick="quickFill('someone fainted')">🚑 Medical</button>
+        <button class="quick-btn security" onclick="quickFill('robbery happening')">🚨 Security</button>
+    </div>
 
-    <h3>Output:</h3>
-    <pre id="output"></pre>
+    <!-- Input -->
+    <input type="text" id="inputText" placeholder="Describe the emergency..." />
+    <button id="analyzeBtn" onclick="sendData()">Analyze Emergency</button>
 
-    <script>
-        function sendData() {
-            let text = document.getElementById("inputText").value;
+    <div class="loader" id="loader">⏳ Analyzing emergency...</div>
+    <div class="error-text" id="errorText"></div>
 
-            fetch("http://127.0.0.1:5000/analyze", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ text: text })
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log("FULL RESPONSE:", data);
+    <!-- Output -->
+    <div class="output-box" id="outputBox">
+        <div class="output-header">📋 Emergency Analysis Report</div>
+        <div class="output-body" id="outputBody"></div>
+    </div>
 
-                // ✅ Safe handling
-                if (data.output) {
-                    document.getElementById("output").innerText = data.output;
-                } else if (data.error) {
-                    document.getElementById("output").innerText = "Error: " + data.error;
-                } else {
-                    document.getElementById("output").innerText = JSON.stringify(data, null, 2);
-                }
-            })
-            .catch(error => {
-                document.getElementById("output").innerText = "Request failed: " + error;
-            });
+    <!-- Reports Toggle -->
+    <div class="reports-toggle">
+        <button onclick="toggleReports()">📂 View All Reports</button>
+    </div>
+    <div class="reports-box" id="reportsBox">
+        <h3>Stored Reports</h3>
+        <div id="reportsList"></div>
+    </div>
+
+</div>
+
+<script>
+    // ── Quick fill ──
+    function quickFill(text) {
+        document.getElementById("inputText").value = text;
+        document.getElementById("inputText").focus();
+    }
+
+    // ── Parse and render structured output ──
+    function renderOutput(text) {
+        const body = document.getElementById("outputBody");
+        body.innerHTML = "";
+
+        let type = "", urgency = "", panic = "", action = "";
+
+        const lines = text.split("\n");
+        let inAction = false;
+        const actionLines = [];
+
+        for (const line of lines) {
+            if (line.includes("Emergency Type:"))      type    = line.split("Emergency Type:")[1].trim();
+            else if (line.includes("Urgency:"))        urgency = line.split("Urgency:")[1].trim();
+            else if (line.includes("Panic Level:"))    panic   = line.split("Panic Level:")[1].trim();
+            else if (line.includes("Suggested Action:")) inAction = true;
+            else if (inAction && line.trim())          actionLines.push(line.trim());
         }
-    </script>
+        action = actionLines.join(" ");
 
+        // If we couldn't parse it (e.g. fallback with error msg), just show raw
+        if (!type && !urgency) {
+            const pre = document.createElement("pre");
+            pre.style.cssText = "font-family:inherit;font-size:14px;color:#555;white-space:pre-wrap;line-height:1.8";
+            pre.innerText = text;
+            body.appendChild(pre);
+            return;
+        }
+
+        function valClass(v) {
+            if (v === "HIGH")   return "val-high";
+            if (v === "MEDIUM") return "val-medium";
+            if (v === "LOW")    return "val-low";
+            return "val-default";
+        }
+
+        body.innerHTML = `
+            <div class="result-row row-type">
+                <span class="label">🚑 Emergency Type</span>
+                <span class="value val-default">${type || "—"}</span>
+            </div>
+            <div class="result-row row-urgency">
+                <span class="label">⚡ Urgency</span>
+                <span class="value ${valClass(urgency)}">${urgency || "—"}</span>
+            </div>
+            <div class="result-row row-panic">
+                <span class="label">😨 Panic Level</span>
+                <span class="value ${valClass(panic)}">${panic || "—"}</span>
+            </div>
+            ${action ? `
+            <div class="action-box">
+                <div class="action-label">👉 Suggested Action</div>
+                ${action}
+            </div>` : ""}
+        `;
+    }
+
+    // ── Main analyze call ──
+    function sendData() {
+        const text = document.getElementById("inputText").value.trim();
+        const btn = document.getElementById("analyzeBtn");
+        const loader = document.getElementById("loader");
+        const errorText = document.getElementById("errorText");
+        const outputBox = document.getElementById("outputBox");
+
+        // Reset
+        errorText.innerText = "";
+        outputBox.style.display = "none";
+
+        if (!text) {
+            errorText.innerText = "⚠️ Please enter an emergency message.";
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = "Analyzing...";
+        loader.style.display = "block";
+
+        fetch("http://127.0.0.1:5000/analyze", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text })
+        })
+        .then(res => res.json())
+        .then(data => {
+            loader.style.display = "none";
+            btn.disabled = false;
+            btn.innerText = "Analyze Emergency";
+
+            if (data.output) {
+                renderOutput(data.output);
+                outputBox.style.display = "block";
+            } else if (data.error) {
+                errorText.innerText = "❌ " + data.error;
+            }
+        })
+        .catch(() => {
+            loader.style.display = "none";
+            btn.disabled = false;
+            btn.innerText = "Analyze Emergency";
+            errorText.innerText = "❌ Could not reach server. Is Flask running?";
+        });
+    }
+
+    // ── Reports ──
+    function toggleReports() {
+        const box = document.getElementById("reportsBox");
+        const isVisible = box.style.display === "block";
+        if (!isVisible) loadReports();
+        box.style.display = isVisible ? "none" : "block";
+    }
+
+    function loadReports() {
+        const list = document.getElementById("reportsList");
+        list.innerHTML = "<p style='color:#aaa;font-size:13px'>Loading...</p>";
+
+        fetch("http://127.0.0.1:5000/reports")
+        .then(res => res.json())
+        .then(data => {
+            if (!data.reports || data.reports.length === 0) {
+                list.innerHTML = "<p style='color:#aaa;font-size:13px'>No reports yet.</p>";
+                return;
+            }
+            list.innerHTML = "";
+            // Show newest first
+            [...data.reports].reverse().forEach(r => {
+                const card = document.createElement("div");
+                card.className = "report-card";
+                card.innerHTML = `
+                    <span class="ts">${r.timestamp}</span>
+                    <strong>Type:</strong> ${r.type} &nbsp;|&nbsp;
+                    <strong>Urgency:</strong> ${r.urgency} &nbsp;|&nbsp;
+                    <strong>Panic:</strong> ${r.panic}<br/>
+                    <strong>Message:</strong> ${r.message}
+                `;
+                list.appendChild(card);
+            });
+        })
+        .catch(() => {
+            list.innerHTML = "<p style='color:#c0392b;font-size:13px'>Failed to load reports.</p>";
+        });
+    }
+
+    // Enter key support
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("inputText").addEventListener("keydown", e => {
+            if (e.key === "Enter") sendData();
+        });
+    });
+</script>
 </body>
 </html>
