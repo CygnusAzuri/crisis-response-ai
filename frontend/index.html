@@ -64,46 +64,79 @@
             --shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
         }
 
-        /* High contrast mode */
-        [data-access="high-contrast"] {
+        /* High contrast mode — clean + compatible */
+        html[data-access~="high-contrast"][data-theme="dark"] {
             --bg: #000000;
             --panel: #000000;
             --border: #ffffff;
             --text: #ffffff;
             --text-sub: #dddddd;
             --input-bg: #000000;
+
             --red: #ff4444;
             --red-light: #ff6666;
+
             --badge-high-bg: #000;
             --badge-high-fg: #ff4444;
+
             --badge-med-bg: #000;
             --badge-med-fg: #ffcc00;
+
             --badge-low-bg: #000;
             --badge-low-fg: #00ff88;
+
             --badge-info-bg: #000;
             --badge-info-fg: #66ccff;
+
             --dispatch-bg: #111;
             --action-bg: #000;
             --action-border: #00ff88;
             --action-fg: #00ff88;
         }
 
+        /* Light theme + contrast (NO forced dark) */
+        html[data-access~="high-contrast"][data-theme="light"] {
+            --bg: #ffffff;
+            --panel: #ffffff;
+            --border: #000000;
+            --text: #000000;
+            --text-sub: #333333;
+            --input-bg: #ffffff;
+
+            --badge-high-bg: #fff;
+            --badge-high-fg: #ff0000;
+
+            --badge-med-bg: #fff;
+            --badge-med-fg: #cc8800;
+
+            --badge-low-bg: #fff;
+            --badge-low-fg: #008844;
+
+            --badge-info-bg: #fff;
+            --badge-info-fg: #0055cc;
+
+            --dispatch-bg: #ffffff;
+            --action-bg: #ffffff;
+            --action-border: #000000;
+            --action-fg: #000000;
+        }
         /* Large text mode */
-        html[data-access*="large-text"] {
-            font-size: 120% !important;
+        html[data-access~="large-text"] {
+            font-size: 120%;
         }
 
-        html[data-access*="large-text"] body {
+        html[data-access~="large-text"] body {
             font-size: inherit;
-        }       
+        }
 
-        [date-access~="large-text"] textarea,
-        [data-access~="large-text"] input,
-        [data-access~="large-text"] .rc-value,
-        [data-access~="large-text"] .step-action-text {
+        html[data-access~="large-text"] textarea,
+        html[data-access~="large-text"] input,
+        html[data-access~="large-text"] .rc-value,
+        html[data-access~="large-text"] .step-action-text {
             font-size: 1.1em;
         }
-        html[data-access*="large-text"] h1 {
+
+        html[data-access~="large-text"] h1 {
             font-size: 2em;
         }
 
@@ -628,18 +661,21 @@
             background: var(--badge-high-bg);
             color: var(--badge-high-fg);
             border-color: var(--badge-high-fg);
+            border-style: solid;
         }
 
         .badge-medium {
             background: var(--badge-med-bg);
             color: var(--badge-med-fg);
             border-color: var(--badge-med-fg);
+            border-style: dashed;
         }
 
         .badge-low {
             background: var(--badge-low-bg);
             color: var(--badge-low-fg);
             border-color: var(--badge-low-fg);
+            border-style: dotted;
         }
 
         .badge-info {
@@ -998,49 +1034,42 @@
 
         function toggleContrast() {
             isContrast = !isContrast;
-
-            let current = document.documentElement.getAttribute('data-access') || '';
+            const btn = document.getElementById('btnContrast');
 
             if (isContrast) {
-                if (!current.includes('high-contrast')) {
-                    current += ' high-contrast';
-                }
-                document.documentElement.setAttribute('data-theme', 'dark');
-                isDark = true;
-                document.getElementById('btnTheme').textContent = '🌙 Dark';
+                // ADD high-contrast WITHOUT touching theme
+                const current = document.documentElement.getAttribute('data-access') || '';
+                document.documentElement.setAttribute(
+                    'data-access',
+                    (current + ' high-contrast').trim()
+                );
             } else {
-                current = current.replace('high-contrast', '').trim();
+                // REMOVE only high-contrast
+                const current = document.documentElement.getAttribute('data-access') || '';
+                document.documentElement.setAttribute(
+                    'data-access',
+                    current.replace('high-contrast', '').trim()
+                );
             }
 
-            if (current) {
-                document.documentElement.setAttribute('data-access', current);
-            } else {
-                document.documentElement.removeAttribute('data-access');
-            }
-
-            const btn = document.getElementById('btnContrast');
             btn.setAttribute('aria-pressed', isContrast);
             btn.classList.toggle('on', isContrast);
         }
-
         function toggleLargeText() {
             isLargeText = !isLargeText;
 
             let current = document.documentElement.getAttribute('data-access') || '';
+            let classes = current.split(' ').filter(Boolean);
 
             if (isLargeText) {
-                if (!current.includes('large-text')) {
-                    current += ' large-text';
+                if (!classes.includes('large-text')) {
+                    classes.push('large-text');
                 }
             } else {
-                current = current.replace('large-text', '').trim();
+                classes = classes.filter(c => c !== 'large-text');
             }
 
-            if (current) {
-                document.documentElement.setAttribute('data-access', current);
-            } else {
-                document.documentElement.removeAttribute('data-access');
-            }
+            document.documentElement.setAttribute('data-access', classes.join(' '));
 
             const btn = document.getElementById('btnLargeText');
             btn.setAttribute('aria-pressed', isLargeText);
