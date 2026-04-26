@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CrisisSense — Responder Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+<style>
+:root{--red:#c0392b;--red-light:#e85d4a;--amber:#d97706;--green:#1a7a6e;--blue:#1d6fa4;--bg:#0d0d0d;--panel:#141414;--border:#2a2a2a;--text:#e8e8e8;--text-sub:#999;--input-bg:#1a1a1a;--badge-high-bg:rgba(192,57,43,.15);--badge-high-fg:#e85d4a;--badge-med-bg:rgba(217,119,6,.15);--badge-med-fg:#f59e0b;--badge-low-bg:rgba(26,122,110,.15);--badge-low-fg:#2dd4bf;--badge-info-bg:rgba(29,111,164,.15);--badge-info-fg:#60a5fa;--shadow:0 4px 32px rgba(0,0,0,.5)}
+[data-theme="light"]{--bg:#f4f4f4;--panel:#fff;--border:#d8d8d8;--text:#1a1a1a;--text-sub:#666;--input-bg:#f9f9f9;--badge-high-bg:#fdecea;--badge-high-fg:#a71c1c;--badge-med-bg:#fef3c7;--badge-med-fg:#92400e;--badge-low-bg:#d1fae5;--badge-low-fg:#065f46;--badge-info-bg:#dbeafe;--badge-info-fg:#1e40af;--shadow:0 4px 24px rgba(0,0,0,.1)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 16px 80px;transition:background .3s,color .3s}
+.topbar{width:100%;max-width:960px;display:flex;align-items:center;justify-content:space-between;padding:14px 0 20px;border-bottom:1px solid var(--border);margin-bottom:28px}
+.brand{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--red);letter-spacing:2px;text-decoration:none}
+.nav-links{display:flex;align-items:center;gap:12px}
+.status-dot{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-sub);font-family:'Share Tech Mono',monospace}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--green);animation:blink 2s infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.page-wrap{width:100%;max-width:960px}
+.page-header{margin-bottom:28px}
+.card-tag{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--red);letter-spacing:2px;margin-bottom:8px}
+h1{font-size:28px;font-weight:900;color:var(--text)}
+h1 span{color:var(--text-sub);font-size:18px;font-weight:400}
+.page-header p{color:var(--text-sub);font-size:15px;margin-top:6px}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:28px}
+.stat-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px 20px;transition:border-color .2s}
+.stat-card:hover{border-color:var(--red)}
+.stat-num{font-size:32px;font-weight:900;font-family:'Share Tech Mono',monospace;color:var(--text);line-height:1}
+.stat-label{font-size:11px;color:var(--text-sub);font-family:'Share Tech Mono',monospace;letter-spacing:1px;margin-top:6px}
+
+/* Alert banner */
+.alert-banner{display:flex;align-items:center;gap:12px;background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.3);border-radius:10px;padding:14px 18px;margin-bottom:22px;font-size:14px;font-weight:600}
+.alert-banner .dot-pulse{width:10px;height:10px;border-radius:50%;background:var(--red);animation:blink .8s infinite;flex-shrink:0}
+
+/* Report card */
+.report-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:14px;transition:border-color .2s,box-shadow .2s;animation:fadeIn .3s ease;position:relative}
+.report-card:hover{border-color:rgba(192,57,43,.4)}
+.report-card.high-urgency{border-left:4px solid var(--red)}
+.report-card.medium-urgency{border-left:4px solid var(--amber)}
+.report-card.low-urgency{border-left:4px solid var(--green)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.rc-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.rc-message{font-size:15px;color:var(--text);line-height:1.6;margin-bottom:10px;padding:12px 14px;background:var(--input-bg);border-radius:8px}
+.rc-meta{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-sub);display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+
+/* Action buttons */
+.rc-actions{display:flex;gap:10px;flex-wrap:wrap}
+.action-btn{flex:1;min-width:130px;padding:10px 14px;border:2px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text-sub);font-size:13px;font-weight:700;font-family:'Barlow',sans-serif;cursor:pointer;transition:all .2s;text-align:center;letter-spacing:.3px}
+.action-btn:hover{border-color:var(--text-sub);color:var(--text)}
+.action-btn.accept{border-color:rgba(29,111,164,.4);color:#60a5fa;background:rgba(29,111,164,.06)}
+.action-btn.accept:hover{border-color:#60a5fa;background:rgba(29,111,164,.12)}
+.action-btn.onway{border-color:rgba(217,119,6,.4);color:#f59e0b;background:rgba(217,119,6,.06)}
+.action-btn.onway:hover{border-color:#f59e0b;background:rgba(217,119,6,.12)}
+.action-btn.complete{border-color:rgba(26,122,110,.4);color:#2dd4bf;background:rgba(26,122,110,.06)}
+.action-btn.complete:hover{border-color:#2dd4bf;background:rgba(26,122,110,.12)}
+.action-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;gap:4px;font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.5px;padding:4px 10px;border-radius:5px}
+.badge-high{background:var(--badge-high-bg);color:var(--badge-high-fg)}
+.badge-medium{background:var(--badge-med-bg);color:var(--badge-med-fg)}
+.badge-low{background:var(--badge-low-bg);color:var(--badge-low-fg)}
+.badge-info{background:var(--badge-info-bg);color:var(--badge-info-fg)}
+.badge-id{background:var(--input-bg);color:var(--text-sub);border:1px solid var(--border)}
+.status-badge{display:inline-flex;align-items:center;gap:5px;font-family:'Share Tech Mono',monospace;font-size:12px;font-weight:700;padding:5px 12px;border-radius:6px;transition:all .3s}
+.status-badge.Pending{background:rgba(217,119,6,.12);color:#f59e0b}
+.status-badge.Dispatched{background:rgba(29,111,164,.12);color:#60a5fa}
+.status-badge.Accepted{background:rgba(29,111,164,.12);color:#60a5fa}
+.status-badge.On-The-Way{background:rgba(217,119,6,.12);color:#f59e0b}
+.status-badge.Resolved{background:rgba(26,122,110,.12);color:#2dd4bf}
+
+.section-title{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-sub);letter-spacing:2px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.empty{text-align:center;padding:60px 20px;color:var(--text-sub);font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:1px}
+.empty .empty-icon{font-size:48px;margin-bottom:14px}
+.btn-ghost{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:transparent;border:1px solid var(--border);color:var(--text-sub);font-size:13px;font-family:'Barlow',sans-serif;border-radius:7px;cursor:pointer;transition:all .2s;text-decoration:none}
+.btn-ghost:hover{border-color:var(--text);color:var(--text)}
+.theme-btn{background:var(--panel);border:1px solid var(--border);color:var(--text);font-size:12px;font-family:'Share Tech Mono',monospace;padding:5px 11px;border-radius:5px;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+.theme-btn:hover{border-color:var(--red);color:var(--red)}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;font-family:'Share Tech Mono',monospace;font-size:13px;padding:12px 20px;border-radius:8px;opacity:0;transform:translateY(10px);transition:all .3s;z-index:9999;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.completed-label{font-family:'Share Tech Mono',monospace;font-size:12px;color:#2dd4bf;letter-spacing:.5px;padding:8px 0}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="/index" class="brand">⬡ CRISISSENSE AI</a>
+  <div class="nav-links">
+    <div class="status-dot"><div class="dot"></div>RESPONDER</div>
+    <button class="theme-btn" onclick="toggleTheme()">☀ LIGHT</button>
+    <button class="btn-ghost" onclick="doLogout()">LOGOUT</button>
+  </div>
+</div>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <div class="card-tag">🚨 RESPONDER PANEL</div>
+    <h1>Active Emergencies <span>· {{ reports|length }} open</span></h1>
+    <p>Welcome, {{ user.name }}. Manage and respond to live emergency reports below.</p>
+  </div>
+
+  {% if reports|selectattr('urgency','equalto','HIGH')|list|length > 0 %}
+  <div class="alert-banner">
+    <div class="dot-pulse"></div>
+    ⚠ {{ reports|selectattr('urgency','equalto','HIGH')|list|length }} HIGH URGENCY report(s) require immediate attention.
+  </div>
+  {% endif %}
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num">{{ reports|length }}</div>
+      <div class="stat-label">OPEN CASES</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">{{ reports|selectattr('urgency','equalto','HIGH')|list|length }}</div>
+      <div class="stat-label">HIGH URGENCY</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">{{ reports|selectattr('status','in',['Accepted','On The Way'])|list|length }}</div>
+      <div class="stat-label">MY ACTIVE</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">{{ reports|selectattr('status','equalto','Pending')|list|length }}</div>
+      <div class="stat-label">AWAITING</div>
+    </div>
+  </div>
+
+  <div class="section-title">ACTIVE EMERGENCY QUEUE</div>
+
+  {% if reports %}
+    {% for r in reports|sort(attribute='urgency') %}
+    {% set idx = r.id %}
+    <div class="report-card {{ r.urgency|lower }}-urgency" id="card-{{ idx }}">
+      <div class="rc-top">
+        <span class="badge badge-id">#{{ idx }}</span>
+        <span class="badge badge-info">{{ r.type }}</span>
+        {% set urg_cls = 'badge-high' if r.urgency == 'HIGH' else ('badge-medium' if r.urgency == 'MEDIUM' else 'badge-low') %}
+        <span class="badge {{ urg_cls }}">⚡ {{ r.urgency }}</span>
+        <span class="status-badge {{ r.status|replace(' ','-') }}" id="status-badge-{{ idx }}">{{ r.status|upper }}</span>
+      </div>
+      <div class="rc-message">{{ r.message }}</div>
+      <div class="rc-meta">
+        <span>📍 {{ r.location }}</span>
+        <span>🕐 {{ r.timestamp }}</span>
+        <span>👤 Reporter: {{ r.user_id }}</span>
+      </div>
+      <div class="rc-actions" id="actions-{{ idx }}">
+        {% if r.status == 'Pending' or r.status == 'Dispatched' %}
+          <button class="action-btn accept" onclick="setStatus({{ r.id }},'Accepted')">✋ ACCEPT</button>
+          <button class="action-btn onway" onclick="setStatus({{ r.id }},'On The Way')">🚔 ON THE WAY</button>
+          <button class="action-btn complete" onclick="setStatus({{ r.id }},'Resolved')">✓ MARK RESOLVED</button>
+        {% elif r.status == 'Accepted' %}
+          <button class="action-btn onway" onclick="setStatus({{ r.id }},'On The Way')">🚔 ON THE WAY</button>
+          <button class="action-btn complete" onclick="setStatus({{ r.id }},'Resolved')">✓ MARK RESOLVED</button>
+        {% elif r.status == 'On The Way' %}
+          <button class="action-btn complete" onclick="setStatus({{ r.id }},'Resolved')">✓ MARK RESOLVED</button>
+        {% else %}
+          <div class="completed-label">✓ RESOLVED — CASE CLOSED</div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty">
+      <div class="empty-icon">✅</div>
+      ALL CLEAR — NO ACTIVE EMERGENCIES<br><br>
+      <small>New reports will appear here automatically.</small>
+    </div>
+  {% endif %}
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function toggleTheme(){
+  const h=document.documentElement;
+  const dark=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme',dark?'light':'dark');
+  document.querySelector('.theme-btn').textContent=dark?'🌙 DARK':'☀ LIGHT';
+}
+async function doLogout(){
+  await fetch('/api/logout',{method:'POST'});
+  window.location.href='/login';
+}
+
+async function setStatus(idx, newStatus){
+  const actionsDiv=document.getElementById('actions-'+idx);
+  const btns=actionsDiv.querySelectorAll('.action-btn');
+  btns.forEach(b=>{b.disabled=true;});
+  try{
+    const res=await fetch('/update_status',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({id:idx,status:newStatus})
+    });
+    const data=await res.json();
+    if(res.ok){
+      const badge=document.getElementById('status-badge-'+idx);
+      badge.className='status-badge '+newStatus.replace(' ','-');
+      badge.textContent=newStatus.toUpperCase();
+
+      // Update action buttons
+      if(newStatus==='Accepted'){
+        actionsDiv.innerHTML=`
+          <button class="action-btn onway" onclick="setStatus(${idx},'On The Way')">🚔 ON THE WAY</button>
+          <button class="action-btn complete" onclick="setStatus(${idx},'Resolved')">✓ MARK RESOLVED</button>`;
+      } else if(newStatus==='On The Way'){
+        actionsDiv.innerHTML=`
+          <button class="action-btn complete" onclick="setStatus(${idx},'Resolved')">✓ MARK RESOLVED</button>`;
+      } else if(newStatus==='Resolved'){
+        actionsDiv.innerHTML=`<div class="completed-label">✓ RESOLVED — CASE CLOSED</div>`;
+      }
+
+      showToast('✓ Case #'+idx+' → '+newStatus);
+    } else {
+      showToast('⚠ '+data.error);
+      btns.forEach(b=>{b.disabled=false;});
+    }
+  }catch(e){
+    showToast('⚠ Network error');
+    btns.forEach(b=>{b.disabled=false;});
+  }
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// Auto-refresh every 30 seconds
+setTimeout(()=>window.location.reload(), 30000);
+async function refreshReports(){
+  try{
+    const res = await fetch('/reports');
+    const data = await res.json();
+
+    data.reports.forEach(r => {
+      const badge = document.getElementById('status-badge-' + r.id);
+      if(badge){
+        badge.className = 'status-badge ' + r.status.replace(' ','-');
+        badge.textContent = r.status.toUpperCase();
+      }
+    });
+
+  }catch(e){
+    console.log("refresh failed");
+  }
+}
+
+setInterval(refreshReports, 1000);
+</script>
+</body>
+</html>

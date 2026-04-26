@@ -120,6 +120,7 @@
             --action-border: #000000;
             --action-fg: #000000;
         }
+
         /* Large text mode */
         html[data-access~="large-text"] {
             font-size: 120%;
@@ -895,8 +896,10 @@
     <!-- Top bar -->
     <div class="topbar">
         <span class="brand">⬡ CRISISSENSE AI</span>
-        <span class="status-dot" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span> SYSTEM
-            ONLINE</span>
+        <div style="display:flex;align-items:center;gap:14px">
+            <a href="/dashboard" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-sub);text-decoration:none;letter-spacing:1px;padding:5px 10px;border:1px solid var(--border);border-radius:6px;transition:all .2s" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-sub)'">MY DASHBOARD</a>
+            <span class="status-dot" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span> SYSTEM ONLINE</span>
+        </div>
     </div>
 
     <!-- Step indicator -->
@@ -1016,6 +1019,7 @@
         // ══════════════════════════
         // Accessibility controls
         // ══════════════════════════
+        let isSubmitting = false;
         let isDark = true;
         let isContrast = false;
         let isLargeText = false;
@@ -1149,10 +1153,14 @@
         }
 
         function goStep3() {
+            console.log("FUNCTION TRIGGERED");
+            if (isSubmitting) return;
+            isSubmitting = true;
             locationText = document.getElementById('locationInput').value.trim();
             if (!locationText) {
                 document.getElementById('err2').innerHTML = '⚠️ Please enter your location.';
                 document.getElementById('locationInput').focus();
+                isSubmitting = false; // ✅ ADD THIS
                 return;
             }
             document.getElementById('err2').innerHTML = '';
@@ -1166,10 +1174,13 @@
             });
 
             // Fire API in parallel with animation
-            const apiPromise = fetch('http://127.0.0.1:5000/analyze', {
+            const apiPromise = fetch('/analyze', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: crisisText })
+                body: JSON.stringify({ 
+                    text: crisisText,
+                    location: locationText
+                })
             }).then(r => r.json());
 
             animateProcess(1, '🔍', 600,
@@ -1177,15 +1188,21 @@
                     () => animateProcess(3, '📡', 1900,
                         () => animateProcess(4, '📞', 2600,
                             () => {
-                                apiPromise.then(data => {
-                                    aiOutput = data.output || '';
-                                    renderResult();
-                                    showStep(4);
-                                }).catch(() => {
-                                    aiOutput = '';
-                                    renderResult();
-                                    showStep(4);
-                                });
+                            apiPromise
+                            .then(data => {
+                                aiOutput = data.output || '';
+                                renderResult();
+                                showStep(4);
+
+                                if (data.redirect) {
+                                    window.location.href = data.redirect;
+                                }
+
+                                isSubmitting = false;
+                            })
+                            .catch(() => {
+                                isSubmitting = false;
+                            });
                             }))));
         }
 
@@ -1365,7 +1382,7 @@
         function loadReports() {
             const list = document.getElementById('reportsList');
             list.innerHTML = `<p style="color:var(--text-sub);font-size:12px;font-family:'Share Tech Mono',monospace;padding:10px 0">LOADING...</p>`;
-            fetch('http://127.0.0.1:5000/reports')
+            fetch('/reports')
                 .then(r => r.json())
                 .then(data => {
                     if (!data.reports || data.reports.length === 0) {
@@ -1393,6 +1410,7 @@
             if (e.key === 'Enter') goStep3();
         });
     </script>
+
 </body>
 
 </html>

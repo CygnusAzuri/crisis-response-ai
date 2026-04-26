@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CrisisSense — My Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --red:#c0392b;--red-light:#e85d4a;--amber:#d97706;--green:#1a7a6e;
+  --bg:#0d0d0d;--panel:#141414;--border:#2a2a2a;--text:#e8e8e8;--text-sub:#999;
+  --input-bg:#1a1a1a;
+  --badge-high-bg:rgba(192,57,43,.15);--badge-high-fg:#e85d4a;
+  --badge-med-bg:rgba(217,119,6,.15);--badge-med-fg:#f59e0b;
+  --badge-low-bg:rgba(26,122,110,.15);--badge-low-fg:#2dd4bf;
+  --badge-info-bg:rgba(29,111,164,.15);--badge-info-fg:#60a5fa;
+  --shadow:0 4px 32px rgba(0,0,0,.5);
+}
+[data-theme="light"]{
+  --bg:#f4f4f4;--panel:#fff;--border:#d8d8d8;--text:#1a1a1a;--text-sub:#666;
+  --input-bg:#f9f9f9;
+  --badge-high-bg:#fdecea;--badge-high-fg:#a71c1c;
+  --badge-med-bg:#fef3c7;--badge-med-fg:#92400e;
+  --badge-low-bg:#d1fae5;--badge-low-fg:#065f46;
+  --badge-info-bg:#dbeafe;--badge-info-fg:#1e40af;
+  --shadow:0 4px 24px rgba(0,0,0,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 16px 80px;transition:background .3s,color .3s}
+.topbar{width:100%;max-width:900px;display:flex;align-items:center;justify-content:space-between;padding:14px 0 20px;border-bottom:1px solid var(--border);margin-bottom:28px}
+.brand{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--red);letter-spacing:2px;text-decoration:none}
+.nav-right{display:flex;align-items:center;gap:10px}
+.status-dot{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-sub);font-family:'Share Tech Mono',monospace}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--green);animation:blink 2s infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.theme-btn{background:var(--panel);border:1px solid var(--border);color:var(--text);font-size:12px;font-family:'Share Tech Mono',monospace;padding:5px 11px;border-radius:5px;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+.theme-btn:hover{border-color:var(--red);color:var(--red)}
+.btn-ghost{display:inline-flex;align-items:center;padding:7px 14px;background:transparent;border:1px solid var(--border);color:var(--text-sub);font-size:13px;font-family:'Barlow',sans-serif;border-radius:7px;cursor:pointer;transition:all .2s;font-weight:600}
+.btn-ghost:hover{border-color:var(--text);color:var(--text)}
+.page-wrap{width:100%;max-width:900px}
+.card-tag{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--red);letter-spacing:2px;margin-bottom:8px}
+.page-header{margin-bottom:28px}
+.page-header h1{font-size:28px;font-weight:900;color:var(--text);line-height:1.2}
+.page-header p{color:var(--text-sub);font-size:15px;margin-top:6px}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px}
+.stat-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px 20px;transition:border-color .2s}
+.stat-card:hover{border-color:var(--red)}
+.stat-num{font-size:32px;font-weight:900;font-family:'Share Tech Mono',monospace;color:var(--text);line-height:1}
+.stat-label{font-size:11px;color:var(--text-sub);font-family:'Share Tech Mono',monospace;letter-spacing:1px;margin-top:6px}
+.section-title{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-sub);letter-spacing:2px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.report-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:12px;transition:border-color .2s;animation:fadeIn .3s ease}
+.report-card:hover{border-color:rgba(192,57,43,.4)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.rc-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.rc-message{font-size:15px;color:var(--text);line-height:1.6;margin-bottom:10px;padding:12px 14px;background:var(--input-bg);border-radius:8px}
+.rc-meta{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-sub);display:flex;gap:16px;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:4px;font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.5px;padding:4px 10px;border-radius:5px}
+.badge-high{background:var(--badge-high-bg);color:var(--badge-high-fg)}
+.badge-medium{background:var(--badge-med-bg);color:var(--badge-med-fg)}
+.badge-low{background:var(--badge-low-bg);color:var(--badge-low-fg)}
+.badge-info{background:var(--badge-info-bg);color:var(--badge-info-fg)}
+.badge-pending{background:rgba(217,119,6,.12);color:#f59e0b}
+.badge-active{background:rgba(29,111,164,.12);color:#60a5fa}
+.badge-resolved{background:rgba(26,122,110,.12);color:#2dd4bf}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;background:var(--red);color:#fff;font-size:15px;font-weight:700;font-family:'Barlow',sans-serif;border:none;border-radius:8px;cursor:pointer;letter-spacing:.3px;transition:background .2s,transform .1s;text-decoration:none}
+.btn-primary:hover{background:var(--red-light)}
+.btn-primary:active{transform:scale(.98)}
+.empty{text-align:center;padding:60px 20px;color:var(--text-sub);font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:1px}
+.empty-icon{font-size:48px;margin-bottom:14px}
+@media(max-width:520px){.page-header h1{font-size:22px}.stats-row{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="/index" class="brand">&#x2B21; CRISISSENSE AI</a>
+  <div class="nav-right">
+    <div class="status-dot"><div class="dot"></div><span>ONLINE</span></div>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">&#9728; LIGHT</button>
+    <button class="btn-ghost" onclick="doLogout()">LOGOUT</button>
+  </div>
+</div>
+
+<div class="page-wrap">
+
+  <div class="page-header">
+    <div class="card-tag">&#128100; USER DASHBOARD</div>
+    <h1>Welcome back, {{ user.name }}!</h1>
+    <p>Track your emergency reports and their current response status.</p>
+  </div>
+
+  {# ── Count stats safely without selectattr('in',...) ── #}
+  {% set ns = namespace(pending=0, active=0, resolved=0) %}
+  {% for r in reports %}
+    {% if r.status == 'Pending' %}{% set ns.pending = ns.pending + 1 %}
+    {% elif r.status == 'Resolved' %}{% set ns.resolved = ns.resolved + 1 %}
+    {% else %}{% set ns.active = ns.active + 1 %}
+    {% endif %}
+  {% endfor %}
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num">{{ reports | length }}</div>
+      <div class="stat-label">TOTAL REPORTS</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">{{ ns.pending }}</div>
+      <div class="stat-label">PENDING</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">{{ ns.active }}</div>
+      <div class="stat-label">IN PROGRESS</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">{{ ns.resolved }}</div>
+      <div class="stat-label">RESOLVED</div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:28px">
+    <a class="btn-primary" href="/index">&#9889; SUBMIT NEW REPORT</a>
+  </div>
+
+  <div class="section-title">YOUR REPORTS</div>
+
+  {% if reports %}
+    {% for r in reports | reverse %}
+      <div class="report-card">
+        <div class="rc-top">
+
+          <span class="badge badge-info">{{ r.type }}</span>
+
+          {% if r.urgency == 'HIGH' %}
+            <span class="badge badge-high">&#9889; HIGH</span>
+          {% elif r.urgency == 'LOW' %}
+            <span class="badge badge-low">&#9889; LOW</span>
+          {% else %}
+            <span class="badge badge-medium">&#9889; MEDIUM</span>
+          {% endif %}
+
+          {% if r.panic == 'HIGH' %}
+            <span class="badge badge-high">PANIC: HIGH</span>
+          {% elif r.panic == 'LOW' %}
+            <span class="badge badge-low">PANIC: LOW</span>
+          {% else %}
+            <span class="badge badge-medium">PANIC: MEDIUM</span>
+          {% endif %}
+
+          {% if r.status == 'Resolved' %}
+            <span class="badge badge-resolved">&#10003; RESOLVED</span>
+          {% elif r.status == 'Dispatched' %}
+            <span class="badge badge-active">&#8635; DISPATCHED</span>
+          {% elif r.status == 'Accepted' %}
+            <span class="badge badge-active">&#8635; ACCEPTED</span>
+          {% elif r.status == 'On The Way' %}
+            <span class="badge badge-active">&#8635; ON THE WAY</span>
+          {% else %}
+            <span class="badge badge-pending">&#9711; PENDING</span>
+          {% endif %}
+
+        </div>
+        <div class="rc-message">{{ r.message }}</div>
+        <div class="rc-meta">
+          <span>&#128205; {{ r.location }}</span>
+          <span>&#128336; {{ r.timestamp }}</span>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty">
+      <div class="empty-icon">&#128237;</div>
+      NO REPORTS SUBMITTED YET<br><br>
+      <a class="btn-primary" href="/index">&#9889; SUBMIT YOUR FIRST REPORT</a>
+    </div>
+  {% endif %}
+
+</div>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeBtn').textContent = isDark ? '\u{1F319} DARK' : '\u2600 LIGHT';
+}
+async function doLogout() {
+  try { await fetch('/api/logout', { method: 'POST' }); } catch(e) {}
+  window.location.href = '/login';
+}
+</script>
+</body>
+</html>

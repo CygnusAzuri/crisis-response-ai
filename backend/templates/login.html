@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CrisisSense — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+<style>
+:root{--red:#c0392b;--red-light:#e85d4a;--amber:#d97706;--green:#1a7a6e;--blue:#1d6fa4;--bg:#0d0d0d;--panel:#141414;--border:#2a2a2a;--text:#e8e8e8;--text-sub:#999;--input-bg:#1a1a1a;--shadow:0 4px 32px rgba(0,0,0,.5)}
+[data-theme="light"]{--bg:#f4f4f4;--panel:#fff;--border:#d8d8d8;--text:#1a1a1a;--text-sub:#666;--input-bg:#f9f9f9;--shadow:0 4px 24px rgba(0,0,0,.1)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 16px 60px;transition:background .3s,color .3s}
+.topbar{width:100%;max-width:480px;display:flex;align-items:center;justify-content:space-between;padding:14px 0 26px;border-bottom:1px solid var(--border);margin-bottom:36px}
+.brand{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--red);letter-spacing:2px}
+.status-dot{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-sub);font-family:'Share Tech Mono',monospace}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.card{width:100%;max-width:480px;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:36px 32px;box-shadow:var(--shadow);animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.card-tag{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--red);letter-spacing:2px;margin-bottom:10px}
+.card h1{font-size:26px;font-weight:900;line-height:1.2;margin-bottom:8px;color:var(--text)}
+.card p.desc{color:var(--text-sub);font-size:15px;line-height:1.6;margin-bottom:26px}
+.field-label{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-sub);letter-spacing:1px;margin-bottom:8px;margin-top:18px}
+input[type="text"],input[type="email"],input[type="password"],input[type="tel"]{width:100%;background:var(--input-bg);border:2px solid var(--border);border-radius:8px;color:var(--text);font-size:16px;font-family:'Barlow',sans-serif;padding:14px 16px;outline:none;transition:border .2s,background .3s}
+input:focus{border-color:var(--red)}
+::placeholder{color:var(--text-sub)}
+.btn-primary{width:100%;margin-top:22px;padding:16px;background:var(--red);color:#fff;font-size:17px;font-weight:700;font-family:'Barlow',sans-serif;border:none;border-radius:8px;cursor:pointer;letter-spacing:.3px;transition:background .2s,transform .1s}
+.btn-primary:hover{background:var(--red-light)}
+.btn-primary:active{transform:scale(.98)}
+.btn-primary:disabled{background:var(--border);color:var(--text-sub);cursor:not-allowed}
+.err{color:var(--red-light);font-size:14px;font-weight:600;margin-top:12px;min-height:20px;display:flex;align-items:center;gap:6px}
+.foot-link{text-align:center;margin-top:22px;font-size:14px;color:var(--text-sub)}
+.foot-link a{color:var(--red);text-decoration:none;font-weight:700}
+.foot-link a:hover{color:var(--red-light)}
+.theme-btn{background:var(--panel);border:1px solid var(--border);color:var(--text);font-size:12px;font-family:'Share Tech Mono',monospace;padding:5px 11px;border-radius:5px;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+.theme-btn:hover{border-color:var(--red);color:var(--red)}
+.divider{display:flex;align-items:center;gap:10px;margin:20px 0 0;color:var(--text-sub);font-size:12px;font-family:'Share Tech Mono',monospace}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand">⚡ CRISISSENSE</div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="status-dot"><div class="dot"></div>SYSTEM ONLINE</div>
+    <button class="theme-btn" onclick="toggleTheme()">☀ LIGHT</button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-tag">🔐 SECURE ACCESS</div>
+  <h1>Sign In</h1>
+  <p class="desc">Access your CrisisSense account to report and track emergencies.</p>
+
+  <div class="field-label">EMAIL OR MOBILE</div>
+  <input type="text" id="contactInput" placeholder="your@email.com or +91xxxxxxxxxx" autocomplete="username"/>
+
+  <div class="field-label">PASSWORD</div>
+  <input type="password" id="passwordInput" placeholder="Enter your password" autocomplete="current-password"/>
+
+  <div class="err" id="errMsg"></div>
+  <button class="btn-primary" id="loginBtn" onclick="doLogin()">SIGN IN →</button>
+
+  <div class="divider">OR</div>
+  <div class="foot-link" style="margin-top:12px">Don't have an account? <a href="/signup">Sign Up</a></div>
+
+  <div class="foot-link" style="margin-top:12px;font-size:12px;font-family:'Share Tech Mono',monospace;letter-spacing:1px">
+    DEMO: admin@crisis.com / admin123 &nbsp;|&nbsp; responder@crisis.com / resp123
+  </div>
+</div>
+
+<script>
+function toggleTheme(){
+  const html=document.documentElement;
+  const isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'light':'dark');
+  document.querySelector('.theme-btn').textContent=isDark?'🌙 DARK':'☀ LIGHT';
+}
+
+async function doLogin(){
+  const contact=document.getElementById('contactInput').value.trim();
+  const password=document.getElementById('passwordInput').value.trim();
+  const err=document.getElementById('errMsg');
+  const btn=document.getElementById('loginBtn');
+  err.textContent='';
+
+  if(!contact||!password){err.textContent='⚠ Please fill all fields.';return;}
+
+  btn.disabled=true;btn.textContent='SIGNING IN...';
+  try{
+    const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contact,password})});
+    const data=await res.json();
+    if(data.redirect){window.location.href=data.redirect;}
+    else{err.textContent='⚠ '+(data.error||'Login failed');}
+  }catch(e){err.textContent='⚠ Network error. Try again.';}
+  finally{btn.disabled=false;btn.textContent='SIGN IN →';}
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+</script>
+</body>
+</html>
