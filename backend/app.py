@@ -9,6 +9,7 @@ from datetime import datetime
 
 import google.generativeai as genai
 
+
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "crisisense_secret_2024")
 CORS(app)
@@ -59,6 +60,7 @@ def init_db():
 
     conn.commit()
     conn.close()
+init_db()
 # =========================
 # API KEYS
 # =========================
@@ -478,5 +480,4 @@ def update_status():
     return jsonify({"message": "Status updated"}), 200
 # =========================
 if __name__ == "__main__":
-    init_db()
     app.run(debug=True)
