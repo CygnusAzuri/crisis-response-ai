@@ -594,36 +594,6 @@ def get_reports():
         print(f"❌ DB error in /reports: {e}")
         reports = []
     return jsonify({"total": len(reports), "reports": reports}), 200
-
-    @app.route("/api/admin/delete-user", methods=["POST"])
-    def delete_user():
-        user, resp = require_login(role="admin")
-        if resp:
-            return resp
-
-        data = request.json or {}
-        contact = (data.get("contact") or "").strip().lower()
-
-        if not contact:
-            return jsonify({"error": "Email required"}), 400
-
-        if contact == "admin@crisis.com":
-            return jsonify({"error": "Cannot delete admin"}), 403
-
-        conn = get_db()
-        deleted = conn.execute(
-            "DELETE FROM users WHERE contact = ?",
-            (contact,)
-        ).rowcount
-
-        conn.commit()
-        conn.close()
-
-        if deleted == 0:
-            return jsonify({"error": "User not found"}), 404
-
-        return jsonify({"message": "User deleted"}), 200
-
 @app.route("/update_status", methods=["POST"])
 def update_status():
     user, resp = require_login()
@@ -651,6 +621,48 @@ def update_status():
 
     return jsonify({"message": "Status updated"}), 200
 
+@app.route("/api/admin/users", methods=["GET"])
+def get_users():
+    user, resp = require_login(role="admin")
+    if resp:
+        return resp
+
+    conn = get_db()
+    users = conn.execute("""
+        SELECT id, name, contact, role FROM users ORDER BY id DESC
+    """).fetchall()
+    conn.close()
+
+    return jsonify([dict(u) for u in users]), 200
+
+@app.route("/api/admin/delete-user", methods=["POST"])
+def delete_user():
+    user, resp = require_login(role="admin")
+    if resp:
+        return resp
+
+    data = request.json or {}
+    contact = (data.get("contact") or "").strip().lower()
+
+    if not contact:
+        return jsonify({"error": "Email required"}), 400
+
+    if contact == "admin@crisis.com":
+        return jsonify({"error": "Cannot delete admin"}), 403
+
+    conn = get_db()
+    deleted = conn.execute(
+        "DELETE FROM users WHERE contact = ?",
+        (contact,)
+    ).rowcount
+
+    conn.commit()
+    conn.close()
+
+    if deleted == 0:
+        return jsonify({"error": "User not found"}), 404
+
+    return jsonify({"message": "User deleted"}), 200
 # =========================
 if __name__ == "__main__":
     app.run(debug=True)
