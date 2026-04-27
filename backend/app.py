@@ -595,6 +595,35 @@ def get_reports():
         reports = []
     return jsonify({"total": len(reports), "reports": reports}), 200
 
+    @app.route("/api/admin/delete-user", methods=["POST"])
+    def delete_user():
+        user, resp = require_login(role="admin")
+        if resp:
+            return resp
+
+        data = request.json or {}
+        contact = (data.get("contact") or "").strip().lower()
+
+        if not contact:
+            return jsonify({"error": "Email required"}), 400
+
+        if contact == "admin@crisis.com":
+            return jsonify({"error": "Cannot delete admin"}), 403
+
+        conn = get_db()
+        deleted = conn.execute(
+            "DELETE FROM users WHERE contact = ?",
+            (contact,)
+        ).rowcount
+
+        conn.commit()
+        conn.close()
+
+        if deleted == 0:
+            return jsonify({"error": "User not found"}), 404
+
+        return jsonify({"message": "User deleted"}), 200
+
 @app.route("/update_status", methods=["POST"])
 def update_status():
     user, resp = require_login()
