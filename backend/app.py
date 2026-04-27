@@ -5,6 +5,9 @@ from groq import Groq
 import os
 import random
 import hashlib
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 import google.generativeai as genai
 
@@ -15,21 +18,9 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "crisisense_secret_2024")
 CORS(app)
 
-# ✅ THE ACTUAL FIX:
-# Your app.py lives at: /opt/render/project/src/backend/app.py
-# Gunicorn runs from:   /opt/render/project/src/
-#
-# So BASE_DIR = .../src/backend/  ← DB was created here
-# But init_db() in one worker created it there while another worker
-# looked elsewhere — hence "no such table".
-#
-# FIX: go one level UP from backend/ to src/ so every worker
-# resolves to the same absolute path, regardless of cwd.
-#
-# EVEN BETTER: set DB_PATH as an env var in Render dashboard:
-#   Key:   DB_PATH
-#   Value: /opt/render/project/src/database.db
-
+# =========================
+# DB PATH
+# =========================
 DB_PATH = os.getenv(
     "DB_PATH",
     os.path.abspath(
@@ -37,6 +28,92 @@ DB_PATH = os.getenv(
     )
 )
 print(f"📂 DB path resolved to: {DB_PATH}")
+
+# =========================
+# EMAIL CONFIG
+# =========================
+# Add these 2 vars to Render → Environment:
+#
+#   MAIL_EMAIL    → your Gmail address  e.g.  yourapp@gmail.com
+#   MAIL_PASSWORD → Gmail App Password (16 chars, no spaces)
+#
+# How to get a Gmail App Password (takes 2 minutes):
+#   1. Go to myaccount.google.com → Security
+#   2. Turn ON 2-Step Verification (if not already)
+#   3. Search "App Passwords" in the search bar
+#   4. App name: "CrisisSense" → click Create
+#   5. Copy the 16-char password → paste as MAIL_PASSWORD in Render
+
+MAIL_EMAIL    = os.getenv("MAIL_EMAIL", "")
+MAIL_PASSWORD = os.getenv("MAIL_PASSWORD", "")
+
+
+def send_otp_email(to_email: str, otp: str) -> bool:
+    """
+    Send OTP to user's email via Gmail SMTP.
+    Returns True on success, False on failure.
+    Falls back to console print if email not configured.
+    """
+    if not MAIL_EMAIL or not MAIL_PASSWORD:
+        # Graceful fallback: still works locally or if env vars not set yet
+        print(f"⚠️  Email not configured. OTP for {to_email}: {otp}")
+        return True
+
+    try:
+        msg            = MIMEMultipart("alternative")
+        msg["Subject"] = "🚨 CrisisSense — Your OTP Code"
+        msg["From"]    = MAIL_EMAIL
+        msg["To"]      = to_email
+
+        text_body = f"""
+Your CrisisSense OTP code is: {otp}
+
+This code expires in 10 minutes.
+Do not share this code with anyone.
+
+— CrisisSense Team
+"""
+
+        html_body = f"""
+<html>
+<body style="font-family: Arial, sans-serif; background: #1a1a2e; color: #eee; padding: 40px;">
+  <div style="max-width: 480px; margin: auto; background: #16213e;
+              border-radius: 12px; padding: 32px;">
+    <h2 style="color: #e63946; margin-bottom: 4px;">🚨 CrisisSense</h2>
+    <p style="color: #aaa; margin-top: 0;">Emergency Response Platform</p>
+    <hr style="border-color: #333; margin: 24px 0;">
+    <p style="font-size: 16px;">Your One-Time Password is:</p>
+    <div style="font-size: 40px; font-weight: bold; letter-spacing: 10px;
+                color: #e63946; background: #0f3460; padding: 20px;
+                border-radius: 8px; text-align: center; margin: 20px 0;">
+      {otp}
+    </div>
+    <p style="color: #aaa; font-size: 13px;">
+      This code expires in <strong>10 minutes</strong>.<br>
+      Do not share this code with anyone.
+    </p>
+  </div>
+</body>
+</html>
+"""
+
+        msg.attach(MIMEText(text_body, "plain"))
+        msg.attach(MIMEText(html_body, "html"))
+
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(MAIL_EMAIL, MAIL_PASSWORD)
+            server.sendmail(MAIL_EMAIL, to_email, msg.as_string())
+
+        print(f"✅ OTP email sent to {to_email}")
+        return True
+
+    except smtplib.SMTPAuthenticationError:
+        print("❌ Gmail auth failed — use an App Password, not your Gmail password")
+        return False
+    except Exception as e:
+        print(f"❌ Failed to send OTP to {to_email}: {e}")
+        return False
+
 
 # =========================
 # DATABASE HELPERS
@@ -50,7 +127,6 @@ def _hash(pw: str) -> str:
     return hashlib.sha256(pw.encode()).hexdigest()
 
 def init_db():
-    """Create tables and seed default accounts. Safe to call multiple times."""
     print(f"🔧 Running init_db() on: {DB_PATH}")
     conn = get_db()
     try:
@@ -93,7 +169,6 @@ def init_db():
     finally:
         conn.close()
 
-# ✅ Gunicorn-safe: runs once per worker, app context is active
 with app.app_context():
     init_db()
 
@@ -106,7 +181,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if GEMINI_API_KEY:
     try:
         genai.configure(api_key=GEMINI_API_KEY)
-        gemini_model = genai.GenerativeModel("gemini-1.5-flash")  # gemini-pro is deprecated
+        gemini_model = genai.GenerativeModel("gemini-1.5-flash")
         print("✅ Google Gemini API loaded.")
     except Exception as e:
         gemini_model = None
@@ -115,12 +190,9 @@ else:
     gemini_model = None
     print("⚠️  GEMINI_API_KEY not set.")
 
+client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 if GROQ_API_KEY:
     print("✅ GROQ_API_KEY loaded.")
-else:
-    print("⚠️  GROQ_API_KEY not set.")
-
-client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
 # =========================
 # IN-MEMORY STORAGE
@@ -274,6 +346,8 @@ def api_signup():
 
     if not name or not contact or not password:
         return jsonify({"error": "All fields are required"}), 400
+    if "@" not in contact or "." not in contact:
+        return jsonify({"error": "Please enter a valid email address"}), 400
     if len(password) < 6:
         return jsonify({"error": "Password must be at least 6 characters"}), 400
 
@@ -300,8 +374,15 @@ def api_signup():
         "password_hash": _hash(password),
         "role":          role,
     }
-    print(f"🔐 OTP for {contact}: {otp}")
-    return jsonify({"message": f"OTP sent (check console): {otp}"}), 200
+
+    sent = send_otp_email(contact, otp)
+    if not sent:
+        return jsonify({
+            "error": "Failed to send OTP email. Please check MAIL_EMAIL and MAIL_PASSWORD in Render environment."
+        }), 500
+
+    return jsonify({"message": f"OTP sent to {contact}. Check your inbox (and spam folder)."}), 200
+
 
 @app.route("/api/verify-otp", methods=["POST"])
 def api_verify_otp():
@@ -341,6 +422,7 @@ def api_verify_otp():
     redirect_url = url_for("dashboard") if role == "user" else url_for("responder_page")
     return jsonify({"message": "Account created!", "redirect": redirect_url}), 200
 
+
 @app.route("/api/login", methods=["POST"])
 def api_login():
     data     = request.json or {}
@@ -348,7 +430,7 @@ def api_login():
     password = (data.get("password") or "").strip()
 
     if not contact or not password:
-        return jsonify({"error": "Email/phone and password are required"}), 400
+        return jsonify({"error": "Email and password are required"}), 400
 
     try:
         conn = get_db()
@@ -372,6 +454,7 @@ def api_login():
         "user":      url_for("dashboard"),
     }
     return jsonify({"redirect": redirect_map.get(user["role"], url_for("dashboard"))}), 200
+
 
 @app.route("/api/logout", methods=["POST"])
 def api_logout():
