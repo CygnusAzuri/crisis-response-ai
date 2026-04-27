@@ -6,28 +6,39 @@ import os
 import random
 import hashlib
 from datetime import datetime
-
 import google.generativeai as genai
 
-
 app = Flask(__name__)
-@app.before_request
-def ensure_db():
-    init_db()
 app.secret_key = os.getenv("SECRET_KEY", "crisisense_secret_2024")
 CORS(app)
+
+# ✅ FIX 1: ABSOLUTE DB PATH (CRITICAL FOR RENDER)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "database.db")
+
 def get_db():
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
 def _hash(pw):
     return hashlib.sha256(pw.encode()).hexdigest()
 
+# ✅ FIX 2: SAFE INIT
 def init_db():
     conn = get_db()
 
-    # 1. CREATE TABLES FIRST
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            contact TEXT UNIQUE,
+            password_hash TEXT,
+            role TEXT,
+            otp_verified INTEGER
+        )
+    """)
+
     conn.execute("""
         CREATE TABLE IF NOT EXISTS reports (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,18 +53,7 @@ def init_db():
         )
     """)
 
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            contact TEXT UNIQUE,
-            password_hash TEXT,
-            role TEXT,
-            otp_verified INTEGER
-        )
-    """)
-
-    # 2. THEN INSERT DEFAULT USERS
+    # Default users
     conn.execute("""
         INSERT OR IGNORE INTO users (name, contact, password_hash, role, otp_verified)
         VALUES (?, ?, ?, ?, ?)
@@ -66,6 +66,8 @@ def init_db():
 
     conn.commit()
     conn.close()
+
+# ✅ IMPORTANT: RUN ON START
 init_db()
 # =========================
 # API KEYS
