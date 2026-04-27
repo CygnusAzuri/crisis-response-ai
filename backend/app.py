@@ -18,6 +18,9 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+def _hash(pw):
+    return hashlib.sha256(pw.encode()).hexdigest()
+
 def init_db():
     conn = get_db()
 
@@ -88,8 +91,7 @@ client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 pending_otps = {}     # { email_or_phone: otp_string }
 
 # Pre-seeded admin + responder accounts (for demo)
-def _hash(pw):
-    return hashlib.sha256(pw.encode()).hexdigest()
+
 
 
 
