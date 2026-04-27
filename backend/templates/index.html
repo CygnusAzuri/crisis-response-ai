@@ -1409,6 +1409,20 @@
         document.getElementById('locationInput').addEventListener('keydown', e => {
             if (e.key === 'Enter') goStep3();
         });
+    function deleteUser() {
+        const email = document.getElementById("deleteEmail").value;
+
+        fetch('/api/admin/delete-user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contact: email })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("msg").innerText =
+                data.message || data.error;
+        });
+    }
     </script>
 
 </body>

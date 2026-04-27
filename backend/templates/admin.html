@@ -173,6 +173,12 @@ select.status-select:focus{border-color:var(--red)}
 </div>
 
 <div class="toast" id="toast">✓ Status updated</div>
+<h3>Delete User</h3>
+
+<input type="email" id="deleteEmail" placeholder="Enter user email">
+<button onclick="deleteUser()">Delete</button>
+
+<p id="msg"></p>
 
 <script>
 function toggleTheme(){
