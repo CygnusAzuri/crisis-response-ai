@@ -15,11 +15,28 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "crisisense_secret_2024")
 CORS(app)
 
-# ✅ FIX 1: ABSOLUTE DB PATH
-# Never use relative paths in production. os.path.abspath(__file__) gives the
-# true location of app.py regardless of what directory Gunicorn is launched from.
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "database.db")
+# ✅ THE ACTUAL FIX:
+# Your app.py lives at: /opt/render/project/src/backend/app.py
+# Gunicorn runs from:   /opt/render/project/src/
+#
+# So BASE_DIR = .../src/backend/  ← DB was created here
+# But init_db() in one worker created it there while another worker
+# looked elsewhere — hence "no such table".
+#
+# FIX: go one level UP from backend/ to src/ so every worker
+# resolves to the same absolute path, regardless of cwd.
+#
+# EVEN BETTER: set DB_PATH as an env var in Render dashboard:
+#   Key:   DB_PATH
+#   Value: /opt/render/project/src/database.db
+
+DB_PATH = os.getenv(
+    "DB_PATH",
+    os.path.abspath(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "database.db")
+    )
+)
+print(f"📂 DB path resolved to: {DB_PATH}")
 
 # =========================
 # DATABASE HELPERS
@@ -32,14 +49,9 @@ def get_db():
 def _hash(pw: str) -> str:
     return hashlib.sha256(pw.encode()).hexdigest()
 
-# ✅ FIX 2: ROBUST init_db()
-# - Uses CREATE TABLE IF NOT EXISTS (idempotent, safe to call multiple times)
-# - Uses INSERT OR IGNORE for seed data (no duplicate errors)
-# - Called via Flask's app.app_context() so it runs reliably under Gunicorn
-#   (Gunicorn workers share the same app object; with_appcontext ensures
-#    Flask internals are ready before we touch the DB)
 def init_db():
-    """Create tables and seed default accounts if they don't exist."""
+    """Create tables and seed default accounts. Safe to call multiple times."""
+    print(f"🔧 Running init_db() on: {DB_PATH}")
     conn = get_db()
     try:
         conn.execute("""
@@ -52,7 +64,6 @@ def init_db():
                 otp_verified  INTEGER DEFAULT 0
             )
         """)
-
         conn.execute("""
             CREATE TABLE IF NOT EXISTS reports (
                 id        INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -66,35 +77,23 @@ def init_db():
                 user_id   TEXT
             )
         """)
-
-        # Seed admin
         conn.execute("""
             INSERT OR IGNORE INTO users (name, contact, password_hash, role, otp_verified)
             VALUES (?, ?, ?, ?, ?)
         """, ("Admin", "admin@crisis.com", _hash("admin123"), "admin", 1))
-
-        # Seed responder
         conn.execute("""
             INSERT OR IGNORE INTO users (name, contact, password_hash, role, otp_verified)
             VALUES (?, ?, ?, ?, ?)
         """, ("Responder One", "responder@crisis.com", _hash("resp123"), "responder", 1))
-
         conn.commit()
-        print(f"✅ Database initialised at {DB_PATH}")
+        print(f"✅ Database initialised at: {DB_PATH}")
     except Exception as e:
         print(f"❌ Database init error: {e}")
         raise
     finally:
         conn.close()
 
-# ✅ FIX 3: USE Flask's with_appcontext LIFECYCLE HOOK
-# `with app.app_context()` is the correct, Gunicorn-safe way to run startup
-# code. It works with:
-#   - `flask run` (development)
-#   - `gunicorn app:app` (production, single or multi-worker)
-#   - `gunicorn --preload app:app` (pre-fork model)
-# Calling init_db() at module level (outside a context) can silently fail
-# under some WSGI servers because Flask's app context isn't active yet.
+# ✅ Gunicorn-safe: runs once per worker, app context is active
 with app.app_context():
     init_db()
 
@@ -105,9 +104,13 @@ GROQ_API_KEY   = os.getenv("GROQ_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
-    gemini_model = genai.GenerativeModel("gemini-pro")
-    print("✅ Google Gemini API loaded.")
+    try:
+        genai.configure(api_key=GEMINI_API_KEY)
+        gemini_model = genai.GenerativeModel("gemini-1.5-flash")  # gemini-pro is deprecated
+        print("✅ Google Gemini API loaded.")
+    except Exception as e:
+        gemini_model = None
+        print(f"⚠️  Gemini init failed: {e}")
 else:
     gemini_model = None
     print("⚠️  GEMINI_API_KEY not set.")
@@ -122,7 +125,7 @@ client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 # =========================
 # IN-MEMORY STORAGE
 # =========================
-pending_otps: dict[str, str] = {}  # { contact: otp_string }
+pending_otps: dict[str, str] = {}
 
 # =========================
 # NORMALIZATION HELPERS
@@ -171,18 +174,20 @@ def inject_normalized_type(raw_output: str, normalized_type: str) -> str:
 # DUPLICATE PREVENTION
 # =========================
 def is_duplicate(text: str, user_id: str) -> bool:
-    conn   = get_db()
-    result = conn.execute("""
-        SELECT timestamp FROM reports
-        WHERE user_id = ? AND LOWER(message) = LOWER(?)
-        ORDER BY id DESC LIMIT 1
-    """, (user_id, text)).fetchone()
-    conn.close()
-
-    if result:
-        ts   = datetime.strptime(result["timestamp"], "%Y-%m-%d %H:%M:%S")
-        diff = (datetime.now() - ts).total_seconds()
-        return diff < 60
+    try:
+        conn   = get_db()
+        result = conn.execute("""
+            SELECT timestamp FROM reports
+            WHERE user_id = ? AND LOWER(message) = LOWER(?)
+            ORDER BY id DESC LIMIT 1
+        """, (user_id, text)).fetchone()
+        conn.close()
+        if result:
+            ts   = datetime.strptime(result["timestamp"], "%Y-%m-%d %H:%M:%S")
+            diff = (datetime.now() - ts).total_seconds()
+            return diff < 60
+    except Exception as e:
+        print(f"⚠️  is_duplicate check failed: {e}")
     return False
 
 def save_report(text: str, output_text: str,
@@ -190,20 +195,22 @@ def save_report(text: str, output_text: str,
     detected_type = normalize_type(output_text + text)
     urgency       = normalize_level(output_text, "urgency")
     panic         = normalize_level(output_text, "panic")
-
-    conn = get_db()
-    conn.execute("""
-        INSERT INTO reports (message, location, type, urgency, panic,
-                             status, timestamp, user_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
-        text, location, detected_type, urgency, panic,
-        "Pending",
-        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        user_id
-    ))
-    conn.commit()
-    conn.close()
+    try:
+        conn = get_db()
+        conn.execute("""
+            INSERT INTO reports (message, location, type, urgency, panic,
+                                 status, timestamp, user_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            text, location, detected_type, urgency, panic,
+            "Pending",
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            user_id
+        ))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"❌ save_report failed: {e}")
 
 # =========================
 # AUTH HELPERS
@@ -212,13 +219,16 @@ def current_user():
     uid = session.get("user_id")
     if not uid:
         return None
-    conn  = get_db()
-    user  = conn.execute("SELECT * FROM users WHERE contact = ?", (uid,)).fetchone()
-    conn.close()
-    return user
+    try:
+        conn = get_db()
+        user = conn.execute("SELECT * FROM users WHERE contact = ?", (uid,)).fetchone()
+        conn.close()
+        return user
+    except Exception as e:
+        print(f"❌ current_user DB error: {e}")
+        return None
 
 def require_login(role=None):
-    """Returns (user, None) on success or (None, redirect_response) on failure."""
     user = current_user()
     if not user:
         return None, redirect(url_for("login_page"))
@@ -267,9 +277,6 @@ def api_signup():
     if len(password) < 6:
         return jsonify({"error": "Password must be at least 6 characters"}), 400
 
-    # ✅ FIX 4: WRAP ALL DB CALLS IN TRY/EXCEPT
-    # Any unexpected DB error returns a clean 500 JSON instead of an HTML crash page,
-    # which makes debugging on Render much easier.
     try:
         conn     = get_db()
         existing = conn.execute(
@@ -317,11 +324,8 @@ def api_verify_otp():
             INSERT INTO users (name, contact, password_hash, role, otp_verified)
             VALUES (?, ?, ?, ?, ?)
         """, (
-            pending["name"],
-            contact,
-            pending["password_hash"],
-            pending["role"],
-            1,
+            pending["name"], contact,
+            pending["password_hash"], pending["role"], 1,
         ))
         conn.commit()
         conn.close()
@@ -382,13 +386,16 @@ def dashboard():
     user, resp = require_login()
     if resp:
         return resp
-
-    conn         = get_db()
-    user_reports = conn.execute("""
-        SELECT * FROM reports WHERE user_id = ? ORDER BY id DESC
-    """, (session["user_id"],)).fetchall()
-    conn.close()
-
+    try:
+        conn         = get_db()
+        user_reports = conn.execute(
+            "SELECT * FROM reports WHERE user_id = ? ORDER BY id DESC",
+            (session["user_id"],)
+        ).fetchall()
+        conn.close()
+    except Exception as e:
+        print(f"❌ DB error in /dashboard: {e}")
+        user_reports = []
     return render_template("dashboard.html", user=user, reports=user_reports)
 
 @app.route("/admin")
@@ -396,11 +403,13 @@ def admin_page():
     user, resp = require_login(role="admin")
     if resp:
         return resp
-
-    conn    = get_db()
-    reports = conn.execute("SELECT * FROM reports ORDER BY id DESC").fetchall()
-    conn.close()
-
+    try:
+        conn    = get_db()
+        reports = conn.execute("SELECT * FROM reports ORDER BY id DESC").fetchall()
+        conn.close()
+    except Exception as e:
+        print(f"❌ DB error in /admin: {e}")
+        reports = []
     return render_template("admin.html", user=user, reports=reports)
 
 @app.route("/responder")
@@ -408,15 +417,17 @@ def responder_page():
     user, resp = require_login(role="responder")
     if resp:
         return resp
-
-    conn    = get_db()
-    reports = conn.execute("""
-        SELECT * FROM reports
-        WHERE status IN ('Pending','Dispatched','Accepted','On The Way')
-        ORDER BY id DESC
-    """).fetchall()
-    conn.close()
-
+    try:
+        conn    = get_db()
+        reports = conn.execute("""
+            SELECT * FROM reports
+            WHERE status IN ('Pending','Dispatched','Accepted','On The Way')
+            ORDER BY id DESC
+        """).fetchall()
+        conn.close()
+    except Exception as e:
+        print(f"❌ DB error in /responder: {e}")
+        reports = []
     return render_template("responder.html", user=user, reports=reports)
 
 # =========================
@@ -454,7 +465,6 @@ Suggested Action:
 
     raw_output = None
 
-    # 1) Try Gemini
     if gemini_model:
         try:
             print("🌐 Using Google Gemini...")
@@ -463,7 +473,6 @@ Suggested Action:
         except Exception as e:
             print("❌ Gemini failed:", e)
 
-    # 2) Fallback to Groq
     if not raw_output and client:
         try:
             print("📡 Using Groq fallback...")
@@ -475,7 +484,6 @@ Suggested Action:
         except Exception as e:
             print("❌ Groq failed:", e)
 
-    # 3) Hard fallback
     if not raw_output:
         t          = normalize_type(text)
         raw_output = (
@@ -494,10 +502,14 @@ Suggested Action:
 # =========================
 @app.route("/reports", methods=["GET"])
 def get_reports():
-    conn    = get_db()
-    rows    = conn.execute("SELECT * FROM reports ORDER BY id DESC").fetchall()
-    conn.close()
-    reports = [dict(r) for r in rows]
+    try:
+        conn    = get_db()
+        rows    = conn.execute("SELECT * FROM reports ORDER BY id DESC").fetchall()
+        conn.close()
+        reports = [dict(r) for r in rows]
+    except Exception as e:
+        print(f"❌ DB error in /reports: {e}")
+        reports = []
     return jsonify({"total": len(reports), "reports": reports}), 200
 
 @app.route("/update_status", methods=["POST"])
