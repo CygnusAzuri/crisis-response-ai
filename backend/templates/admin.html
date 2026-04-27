@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CrisisSense — Admin Dashboard</title>
+<title>CrisisSense - Admin Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600;700;900&display=swap" rel="stylesheet"/>
 <style>
 :root{--red:#c0392b;--red-light:#e85d4a;--amber:#d97706;--green:#1a7a6e;--blue:#1d6fa4;--bg:#0d0d0d;--panel:#141414;--border:#2a2a2a;--text:#e8e8e8;--text-sub:#999;--input-bg:#1a1a1a;--badge-high-bg:rgba(192,57,43,.15);--badge-high-fg:#e85d4a;--badge-med-bg:rgba(217,119,6,.15);--badge-med-fg:#f59e0b;--badge-low-bg:rgba(26,122,110,.15);--badge-low-fg:#2dd4bf;--badge-info-bg:rgba(29,111,164,.15);--badge-info-fg:#60a5fa;--shadow:0 4px 32px rgba(0,0,0,.5)}
@@ -343,6 +343,10 @@ async function deleteUser(email){
 
   loadUsers(); // 🔥 refresh list
 }
+window.onload = () => {
+  loadUsers();
+};
 </script>
+<div id="toast" class="toast"></div>
 </body>
 </html>
