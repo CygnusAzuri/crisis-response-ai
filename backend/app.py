@@ -11,6 +11,9 @@ import google.generativeai as genai
 
 
 app = Flask(__name__)
+@app.before_request
+def ensure_db():
+    init_db()
 app.secret_key = os.getenv("SECRET_KEY", "crisisense_secret_2024")
 CORS(app)
 def get_db():
