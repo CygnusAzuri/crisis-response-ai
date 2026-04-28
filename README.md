@@ -1,5 +1,4 @@
 # 🚨 CrisisSense AI
-
 AI-powered emergency response system that detects, analyzes, and structures crisis messages in real-time.
 
 ## 🎯 Objective
@@ -8,24 +7,23 @@ Detect emergencies instantly, classify them, and provide actionable steps while 
 ## 🔹 Features
 - Emergency Type Detection (Fire, Medical, Security, Accident, Disaster)
 - Urgency & Panic Level Analysis
-- AI-powered (Groq - LLaMA 3.3)
+- AI-powered (Google Gemini + Groq LLaMA 3.3 fallback)
 - Fallback system (works without AI)
 - Step-by-step safety guidance
-- Simulated dispatch (ambulance / police / fire)
+- Simulated alerts to response teams (ambulance / police / fire)
+- Real-time status tracking (admin + responder dashboards)
 - Accessibility support (contrast, text, motion)
 
 ## 🔹 Tech Stack
 Frontend: HTML, CSS, JavaScript  
 Backend: Flask (Python)  
-AI: Groq API (LLaMA 3.3)
+AI: Google Gemini + Groq API (LLaMA 3.3)
 
 ## 🔹 Setup
-
 1. Install dependencies:
 pip install flask flask-cors groq
 
 2. Set API key:
-
 CMD:
 set GROQ_API_KEY=your_key_here
 
@@ -39,7 +37,6 @@ python app.py
 Open frontend/index.html in browser
 
 ## 🔹 Example
-
 Input:
 fire in kitchen help
 
