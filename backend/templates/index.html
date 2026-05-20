@@ -1,151 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CrisisSense AI — Emergency Response</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600;700;900&display=swap"
-        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600;700;900&display=swap" rel="stylesheet" />
     <style>
-        /* ══════════════════════════════════════
-           CSS VARIABLES — theme + accessibility
-        ══════════════════════════════════════ */
         :root {
-            --red: #c0392b;
-            --red-light: #e85d4a;
-            --amber: #d97706;
-            --green: #1a7a6e;
-            --blue: #1d6fa4;
-
-            /* Dark theme (default) */
-            --bg: #0d0d0d;
-            --panel: #141414;
-            --border: #2a2a2a;
-            --text: #e8e8e8;
-            --text-sub: #999;
-            --input-bg: #1a1a1a;
-            --badge-high-bg: rgba(192, 57, 43, 0.15);
-            --badge-high-fg: #e85d4a;
-            --badge-med-bg: rgba(217, 119, 6, 0.15);
-            --badge-med-fg: #f59e0b;
-            --badge-low-bg: rgba(26, 122, 110, 0.15);
-            --badge-low-fg: #2dd4bf;
-            --badge-info-bg: rgba(29, 111, 164, 0.15);
-            --badge-info-fg: #60a5fa;
-            --dispatch-bg: #1a1a1a;
-            --action-bg: rgba(26, 122, 110, 0.08);
-            --action-border: rgba(26, 122, 110, 0.35);
-            --action-fg: #2dd4bf;
-            --shadow: 0 4px 32px rgba(0, 0, 0, 0.5);
+            --red:              #c0392b;
+            --red-light:        #e85d4a;
+            --amber:            #d97706;
+            --green:            #1a7a6e;
+            --bg:               #0d0d0d;
+            --panel:            #141414;
+            --border:           #2a2a2a;
+            --text:             #e8e8e8;
+            --text-sub:         #999;
+            --input-bg:         #1a1a1a;
+            --badge-high-bg:    rgba(192,57,43,.15);
+            --badge-high-fg:    #e85d4a;
+            --badge-med-bg:     rgba(217,119,6,.15);
+            --badge-med-fg:     #f59e0b;
+            --badge-low-bg:     rgba(26,122,110,.15);
+            --badge-low-fg:     #2dd4bf;
+            --badge-info-bg:    rgba(29,111,164,.15);
+            --badge-info-fg:    #60a5fa;
+            --dispatch-bg:      #1a1a1a;
+            --action-bg:        rgba(26,122,110,.08);
+            --action-border:    rgba(26,122,110,.35);
+            --action-fg:        #2dd4bf;
+            --shadow:           0 4px 32px rgba(0,0,0,.5);
         }
 
-        /* Light theme */
         [data-theme="light"] {
-            --bg: #f4f4f4;
-            --panel: #ffffff;
-            --border: #d8d8d8;
-            --text: #1a1a1a;
-            --text-sub: #666;
-            --input-bg: #f9f9f9;
+            --bg:            #f4f4f4;
+            --panel:         #ffffff;
+            --border:        #d8d8d8;
+            --text:          #1a1a1a;
+            --text-sub:      #666;
+            --input-bg:      #f9f9f9;
             --badge-high-bg: #fdecea;
             --badge-high-fg: #a71c1c;
-            --badge-med-bg: #fef3c7;
-            --badge-med-fg: #92400e;
-            --badge-low-bg: #d1fae5;
-            --badge-low-fg: #065f46;
+            --badge-med-bg:  #fef3c7;
+            --badge-med-fg:  #92400e;
+            --badge-low-bg:  #d1fae5;
+            --badge-low-fg:  #065f46;
             --badge-info-bg: #dbeafe;
             --badge-info-fg: #1e40af;
-            --dispatch-bg: #f4f4f4;
-            --action-bg: #ecfdf5;
+            --dispatch-bg:   #f4f4f4;
+            --action-bg:     #ecfdf5;
             --action-border: #6ee7b7;
-            --action-fg: #065f46;
-            --shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+            --action-fg:     #065f46;
+            --shadow:        0 4px 24px rgba(0,0,0,.1);
         }
 
-        /* High contrast mode — clean + compatible */
         html[data-access~="high-contrast"][data-theme="dark"] {
-            --bg: #000000;
-            --panel: #000000;
-            --border: #ffffff;
-            --text: #ffffff;
-            --text-sub: #dddddd;
-            --input-bg: #000000;
-
-            --red: #ff4444;
-            --red-light: #ff6666;
-
-            --badge-high-bg: #000;
+            --bg:            #000;
+            --panel:         #000;
+            --border:        #fff;
+            --text:          #fff;
+            --text-sub:      #ddd;
+            --input-bg:      #000;
+            --red:           #ff4444;
+            --red-light:     #ff6666;
             --badge-high-fg: #ff4444;
-
-            --badge-med-bg: #000;
-            --badge-med-fg: #ffcc00;
-
-            --badge-low-bg: #000;
-            --badge-low-fg: #00ff88;
-
-            --badge-info-bg: #000;
+            --badge-med-fg:  #ffcc00;
+            --badge-low-fg:  #00ff88;
             --badge-info-fg: #66ccff;
-
-            --dispatch-bg: #111;
-            --action-bg: #000;
+            --dispatch-bg:   #111;
             --action-border: #00ff88;
-            --action-fg: #00ff88;
+            --action-fg:     #00ff88;
         }
 
-        /* Light theme + contrast (NO forced dark) */
         html[data-access~="high-contrast"][data-theme="light"] {
-            --bg: #ffffff;
-            --panel: #ffffff;
-            --border: #000000;
-            --text: #000000;
-            --text-sub: #333333;
-            --input-bg: #ffffff;
-
-            --badge-high-bg: #fff;
+            --bg:            #fff;
+            --panel:         #fff;
+            --border:        #000;
+            --text:          #000;
+            --text-sub:      #333;
+            --input-bg:      #fff;
             --badge-high-fg: #ff0000;
-
-            --badge-med-bg: #fff;
-            --badge-med-fg: #cc8800;
-
-            --badge-low-bg: #fff;
-            --badge-low-fg: #008844;
-
-            --badge-info-bg: #fff;
+            --badge-med-fg:  #cc8800;
+            --badge-low-fg:  #008844;
             --badge-info-fg: #0055cc;
-
-            --dispatch-bg: #ffffff;
-            --action-bg: #ffffff;
-            --action-border: #000000;
-            --action-fg: #000000;
+            --dispatch-bg:   #fff;
+            --action-border: #000;
+            --action-fg:     #000;
         }
 
-        /* Large text mode */
-        html[data-access~="large-text"] {
-            font-size: 120%;
-        }
-
-        html[data-access~="large-text"] body {
-            font-size: inherit;
-        }
-
+        html[data-access~="large-text"]          { font-size: 120%; }
         html[data-access~="large-text"] textarea,
         html[data-access~="large-text"] input,
-        html[data-access~="large-text"] .rc-value,
-        html[data-access~="large-text"] .step-action-text {
-            font-size: 1.1em;
-        }
+        html[data-access~="large-text"] .rc-value { font-size: 1.1em; }
+        html[data-access~="large-text"] h1        { font-size: 2em; }
 
-        html[data-access~="large-text"] h1 {
-            font-size: 2em;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Barlow', sans-serif;
@@ -156,10 +105,27 @@
             flex-direction: column;
             align-items: center;
             padding: 0 16px 80px;
-            transition: background 0.3s, color 0.3s;
+            transition: background .3s, color .3s;
         }
 
-        /* ── Accessibility toolbar ── */
+        /* skip link */
+        .skip-link {
+            position: absolute;
+            top: -100px;
+            left: 16px;
+            background: var(--red);
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+            z-index: 9999;
+            text-decoration: none;
+            transition: top .2s;
+        }
+        .skip-link:focus { top: 10px; }
+
+        /* a11y bar */
         .a11y-bar {
             width: 100%;
             max-width: 680px;
@@ -170,7 +136,6 @@
             padding: 10px 0 0;
             flex-wrap: wrap;
         }
-
         .a11y-label {
             font-family: 'Share Tech Mono', monospace;
             font-size: 10px;
@@ -178,7 +143,6 @@
             letter-spacing: 1px;
             margin-right: 4px;
         }
-
         .a11y-btn {
             background: var(--panel);
             border: 1px solid var(--border);
@@ -188,23 +152,15 @@
             padding: 5px 11px;
             border-radius: 5px;
             cursor: pointer;
-            transition: all 0.2s;
-            letter-spacing: 0.5px;
+            transition: all .2s;
+            letter-spacing: .5px;
             white-space: nowrap;
         }
-
         .a11y-btn:hover,
-        .a11y-btn.on {
-            border-color: var(--red);
-            color: var(--red);
-        }
+        .a11y-btn.on   { border-color: var(--red); color: var(--red); }
+        .a11y-btn:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
 
-        .a11y-btn:focus-visible {
-            outline: 3px solid var(--red);
-            outline-offset: 2px;
-        }
-
-        /* ── Top bar ── */
+        /* topbar */
         .topbar {
             width: 100%;
             max-width: 680px;
@@ -215,13 +171,25 @@
             border-bottom: 1px solid var(--border);
             margin-bottom: 30px;
         }
-
         .brand {
             font-family: 'Share Tech Mono', monospace;
             font-size: 14px;
             color: var(--red);
             letter-spacing: 2px;
         }
+        .nav-link {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            color: var(--text-sub);
+            text-decoration: none;
+            letter-spacing: 1px;
+            padding: 5px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            transition: color .2s, border-color .2s;
+        }
+        .nav-link:hover        { color: var(--red); border-color: var(--red); }
+        .nav-link:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
 
         .status-dot {
             display: flex;
@@ -231,7 +199,6 @@
             color: var(--text-sub);
             font-family: 'Share Tech Mono', monospace;
         }
-
         .dot {
             width: 9px;
             height: 9px;
@@ -239,27 +206,15 @@
             background: var(--green);
             animation: blink 2s infinite;
         }
+        @keyframes blink { 0%,100% { opacity:1 } 50% { opacity:.25 } }
 
-        @keyframes blink {
-
-            0%,
-            100% {
-                opacity: 1
-            }
-
-            50% {
-                opacity: 0.25
-            }
-        }
-
-        /* ── Step indicator ── */
+        /* step indicator */
         .steps {
             display: flex;
             width: 100%;
             max-width: 680px;
             margin-bottom: 30px;
         }
-
         .step-item {
             flex: 1;
             display: flex;
@@ -267,7 +222,6 @@
             align-items: center;
             position: relative;
         }
-
         .step-item:not(:last-child)::after {
             content: '';
             position: absolute;
@@ -276,12 +230,9 @@
             width: 80%;
             height: 2px;
             background: var(--border);
-            transition: background 0.4s;
+            transition: background .4s;
         }
-
-        .step-item.done:not(:last-child)::after {
-            background: var(--red);
-        }
+        .step-item.done:not(:last-child)::after { background: var(--red); }
 
         .step-num {
             width: 30px;
@@ -295,36 +246,30 @@
             font-size: 13px;
             color: var(--text-sub);
             background: var(--bg);
-            transition: all 0.3s;
+            transition: all .3s;
             z-index: 1;
         }
-
         .step-item.active .step-num {
             border-color: var(--red);
             color: var(--red);
-            box-shadow: 0 0 10px rgba(192, 57, 43, 0.3);
+            box-shadow: 0 0 10px rgba(192,57,43,.3);
         }
-
         .step-item.done .step-num {
             background: var(--red);
             border-color: var(--red);
             color: #fff;
         }
-
         .step-label {
             font-size: 10px;
             color: var(--text-sub);
             margin-top: 5px;
             text-align: center;
             font-family: 'Share Tech Mono', monospace;
-            letter-spacing: 0.5px;
+            letter-spacing: .5px;
         }
+        .step-item.active .step-label { color: var(--text); }
 
-        .step-item.active .step-label {
-            color: var(--text);
-        }
-
-        /* ── Card ── */
+        /* card */
         .card {
             width: 100%;
             max-width: 680px;
@@ -334,25 +279,10 @@
             padding: 36px 32px;
             display: none;
             box-shadow: var(--shadow);
-            transition: background 0.3s, border-color 0.3s;
+            transition: background .3s, border-color .3s;
         }
-
-        .card.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(6px)
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0)
-            }
-        }
+        .card.active { display: block; animation: fadeIn .3s ease; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(6px) } to { opacity:1; transform:translateY(0) } }
 
         .card-tag {
             font-family: 'Share Tech Mono', monospace;
@@ -361,7 +291,6 @@
             letter-spacing: 2px;
             margin-bottom: 10px;
         }
-
         .card h1 {
             font-size: 26px;
             font-weight: 900;
@@ -369,7 +298,6 @@
             margin-bottom: 8px;
             color: var(--text);
         }
-
         .card p.desc {
             color: var(--text-sub);
             font-size: 15px;
@@ -377,7 +305,7 @@
             margin-bottom: 26px;
         }
 
-        /* ── Quick buttons ── */
+        /* quick buttons */
         .quick-label {
             font-family: 'Share Tech Mono', monospace;
             font-size: 11px;
@@ -385,14 +313,12 @@
             letter-spacing: 1px;
             margin-bottom: 10px;
         }
-
         .quick-row {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
-
         .qbtn {
             flex: 1;
             min-width: 110px;
@@ -405,21 +331,13 @@
             font-weight: 700;
             font-family: 'Barlow', sans-serif;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all .2s;
             text-align: center;
         }
+        .qbtn:hover         { border-color: var(--red); color: var(--red); }
+        .qbtn:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
 
-        .qbtn:hover {
-            border-color: var(--red);
-            color: var(--red);
-        }
-
-        .qbtn:focus-visible {
-            outline: 3px solid var(--red);
-            outline-offset: 2px;
-        }
-
-        /* ── Inputs ── */
+        /* inputs */
         textarea,
         input[type="text"] {
             width: 100%;
@@ -432,29 +350,15 @@
             padding: 14px 16px;
             outline: none;
             resize: none;
-            transition: border 0.2s, background 0.3s;
+            transition: border .2s, background .3s;
         }
-
-        textarea {
-            height: 100px;
-        }
-
+        textarea { height: 100px; }
         textarea:focus,
-        input[type="text"]:focus {
-            border-color: var(--red);
-        }
-
+        input[type="text"]:focus          { border-color: var(--red); }
         textarea:focus-visible,
-        input[type="text"]:focus-visible {
-            outline: 3px solid var(--red);
-            outline-offset: 2px;
-        }
+        input[type="text"]:focus-visible  { outline: 3px solid var(--red); outline-offset: 2px; }
+        ::placeholder { color: var(--text-sub); }
 
-        ::placeholder {
-            color: var(--text-sub);
-        }
-
-        /* ── Char counter ── */
         .char-count {
             font-family: 'Share Tech Mono', monospace;
             font-size: 11px;
@@ -463,7 +367,7 @@
             margin-top: 4px;
         }
 
-        /* ── Buttons ── */
+        /* buttons */
         .btn-primary {
             width: 100%;
             margin-top: 14px;
@@ -476,28 +380,13 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            letter-spacing: 0.3px;
-            transition: background 0.2s, transform 0.1s;
+            letter-spacing: .3px;
+            transition: background .2s, transform .1s;
         }
-
-        .btn-primary:hover {
-            background: var(--red-light);
-        }
-
-        .btn-primary:active {
-            transform: scale(0.98);
-        }
-
-        .btn-primary:disabled {
-            background: var(--border);
-            color: var(--text-sub);
-            cursor: not-allowed;
-        }
-
-        .btn-primary:focus-visible {
-            outline: 3px solid #fff;
-            outline-offset: 2px;
-        }
+        .btn-primary:hover              { background: var(--red-light); }
+        .btn-primary:active             { transform: scale(.98); }
+        .btn-primary:disabled           { background: var(--border); color: var(--text-sub); cursor: not-allowed; }
+        .btn-primary:focus-visible      { outline: 3px solid #fff; outline-offset: 2px; }
 
         .btn-ghost {
             width: 100%;
@@ -510,20 +399,11 @@
             font-family: 'Barlow', sans-serif;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all .2s;
         }
+        .btn-ghost:hover        { border-color: var(--text); color: var(--text); }
+        .btn-ghost:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
 
-        .btn-ghost:hover {
-            border-color: var(--text);
-            color: var(--text);
-        }
-
-        .btn-ghost:focus-visible {
-            outline: 3px solid var(--red);
-            outline-offset: 2px;
-        }
-
-        /* ── Error ── */
         .err {
             color: var(--red-light);
             font-size: 14px;
@@ -535,12 +415,8 @@
             gap: 6px;
         }
 
-        /* ── Step 3 processing ── */
-        .process-list {
-            list-style: none;
-            margin: 24px 0;
-        }
-
+        /* step 3 processing */
+        .process-list { list-style: none; margin: 24px 0; }
         .process-list li {
             display: flex;
             align-items: center;
@@ -549,20 +425,11 @@
             border-bottom: 1px solid var(--border);
             font-size: 16px;
             color: var(--text-sub);
-            transition: color 0.3s;
+            transition: color .3s;
         }
-
-        .process-list li:last-child {
-            border-bottom: none;
-        }
-
-        .process-list li.done {
-            color: var(--text);
-        }
-
-        .process-list li.active {
-            color: var(--amber);
-        }
+        .process-list li:last-child { border-bottom: none; }
+        .process-list li.done   { color: var(--text); }
+        .process-list li.active { color: var(--amber); }
 
         .p-icon {
             width: 34px;
@@ -574,33 +441,16 @@
             justify-content: center;
             font-size: 15px;
             flex-shrink: 0;
-            transition: all 0.3s;
+            transition: all .3s;
         }
-
-        .process-list li.done .p-icon {
-            background: var(--green);
-            border-color: var(--green);
-        }
-
-        .process-list li.active .p-icon {
-            background: var(--amber);
-            border-color: var(--amber);
-            animation: glow 1s infinite;
-        }
-
+        .process-list li.done .p-icon   { background: var(--green); border-color: var(--green); }
+        .process-list li.active .p-icon { background: var(--amber); border-color: var(--amber); animation: glow 1s infinite; }
         @keyframes glow {
-
-            0%,
-            100% {
-                box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.5);
-            }
-
-            50% {
-                box-shadow: 0 0 0 8px rgba(217, 119, 6, 0);
-            }
+            0%,100% { box-shadow: 0 0 0 0 rgba(217,119,6,.5); }
+            50%      { box-shadow: 0 0 0 8px rgba(217,119,6,0); }
         }
 
-        /* ── Step 4 result ── */
+        /* step 4 result */
         .crisis-id {
             font-family: 'Share Tech Mono', monospace;
             font-size: 12px;
@@ -612,25 +462,19 @@
             padding: 5px 12px;
             border-radius: 4px;
         }
-
         .result-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
             margin-bottom: 18px;
         }
-
         .rcard {
             background: var(--input-bg);
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 14px 16px;
         }
-
-        .rcard.full {
-            grid-column: 1 / -1;
-        }
-
+        .rcard.full { grid-column: 1 / -1; }
         .rc-label {
             font-family: 'Share Tech Mono', monospace;
             font-size: 11px;
@@ -638,13 +482,8 @@
             letter-spacing: 1px;
             margin-bottom: 7px;
         }
+        .rc-value { font-size: 16px; font-weight: 700; }
 
-        .rc-value {
-            font-size: 16px;
-            font-weight: 700;
-        }
-
-        /* Badges — shape + icon, not just color */
         .badge {
             display: inline-flex;
             align-items: center;
@@ -655,44 +494,20 @@
             font-weight: 700;
             font-family: 'Share Tech Mono', monospace;
             border: 2px solid transparent;
-            letter-spacing: 0.5px;
+            letter-spacing: .5px;
         }
+        .badge-high   { background: var(--badge-high-bg); color: var(--badge-high-fg); border-color: var(--badge-high-fg); border-style: solid; }
+        .badge-medium { background: var(--badge-med-bg);  color: var(--badge-med-fg);  border-color: var(--badge-med-fg);  border-style: dashed; }
+        .badge-low    { background: var(--badge-low-bg);  color: var(--badge-low-fg);  border-color: var(--badge-low-fg);  border-style: dotted; }
+        .badge-info   { background: var(--badge-info-bg); color: var(--badge-info-fg); border-color: var(--badge-info-fg); }
 
-        .badge-high {
-            background: var(--badge-high-bg);
-            color: var(--badge-high-fg);
-            border-color: var(--badge-high-fg);
-            border-style: solid;
-        }
-
-        .badge-medium {
-            background: var(--badge-med-bg);
-            color: var(--badge-med-fg);
-            border-color: var(--badge-med-fg);
-            border-style: dashed;
-        }
-
-        .badge-low {
-            background: var(--badge-low-bg);
-            color: var(--badge-low-fg);
-            border-color: var(--badge-low-fg);
-            border-style: dotted;
-        }
-
-        .badge-info {
-            background: var(--badge-info-bg);
-            color: var(--badge-info-fg);
-            border-color: var(--badge-info-fg);
-        }
-
-        /* Dispatch */
+        /* dispatch */
         .dispatch-box {
             border: 1px solid var(--border);
             border-radius: 10px;
             overflow: hidden;
             margin-bottom: 18px;
         }
-
         .dispatch-header {
             background: var(--dispatch-bg);
             padding: 10px 16px;
@@ -702,7 +517,6 @@
             letter-spacing: 1.5px;
             border-bottom: 1px solid var(--border);
         }
-
         .dispatch-row {
             display: flex;
             align-items: center;
@@ -711,39 +525,19 @@
             border-bottom: 1px solid var(--border);
             font-size: 15px;
         }
-
-        .dispatch-row:last-child {
-            border-bottom: none;
-        }
-
-        .dispatch-row .di {
-            font-size: 22px;
-            width: 30px;
-            text-align: center;
-            flex-shrink: 0;
-        }
-
-        .dispatch-row .dt {
-            flex: 1;
-            font-weight: 600;
-        }
-
+        .dispatch-row:last-child { border-bottom: none; }
+        .dispatch-row .di { font-size: 22px; width: 30px; text-align: center; flex-shrink: 0; }
+        .dispatch-row .dt { flex: 1; font-weight: 600; }
         .dispatch-row .ds {
             font-family: 'Share Tech Mono', monospace;
             font-size: 11px;
             letter-spacing: 1px;
             font-weight: 700;
         }
+        .ds-ok     { color: var(--green); }
+        .ds-active { color: var(--amber); }
 
-        .ds-ok {
-            color: var(--green);
-        }
-
-        .ds-active {
-            color: var(--amber);
-        }
-
-        /* Action */
+        /* action box */
         .action-box {
             background: var(--action-bg);
             border: 2px solid var(--action-border);
@@ -751,7 +545,6 @@
             padding: 18px;
             margin-bottom: 18px;
         }
-
         .ab-label {
             font-family: 'Share Tech Mono', monospace;
             font-size: 11px;
@@ -760,20 +553,33 @@
             margin-bottom: 10px;
             font-weight: 700;
         }
+        .ab-text { font-size: 16px; line-height: 1.7; color: var(--text); font-weight: 600; }
 
-        .ab-text {
-            font-size: 16px;
-            line-height: 1.7;
-            color: var(--text);
-            font-weight: 600;
+        .step-action {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 10px;
         }
-
-        /* Reports */
-        .reports-toggle {
-            margin-top: 14px;
-            text-align: center;
+        .step-num-badge {
+            background: var(--action-border);
+            color: var(--action-fg);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
         }
+        .step-action-text { flex: 1; }
 
+        /* reports */
+        .reports-toggle { margin-top: 14px; text-align: center; }
         .reports-toggle button {
             background: none;
             border: none;
@@ -786,15 +592,8 @@
             text-underline-offset: 3px;
             padding: 4px 8px;
         }
-
-        .reports-toggle button:hover {
-            color: var(--text);
-        }
-
-        .reports-toggle button:focus-visible {
-            outline: 3px solid var(--red);
-            outline-offset: 2px;
-        }
+        .reports-toggle button:hover        { color: var(--text); }
+        .reports-toggle button:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
 
         .reports-box {
             width: 100%;
@@ -802,7 +601,6 @@
             margin-top: 16px;
             display: none;
         }
-
         .report-card {
             background: var(--panel);
             border: 1px solid var(--border);
@@ -814,603 +612,500 @@
             line-height: 1.8;
             font-family: 'Share Tech Mono', monospace;
         }
+        .report-card strong { color: var(--text); }
 
-        .report-card strong {
-            color: var(--text);
-        }
-
-        /* Location icon */
-        .location-icon {
-            font-size: 44px;
-            text-align: center;
-            margin-bottom: 14px;
-        }
-
-        /* Skip to content link (accessibility) */
-        .skip-link {
-            position: absolute;
-            top: -100px;
-            left: 16px;
-            background: var(--red);
-            color: white;
-            padding: 10px 16px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 14px;
-            z-index: 9999;
-            text-decoration: none;
-            transition: top 0.2s;
-        }
-
-        .skip-link:focus {
-            top: 10px;
-        }
+        .location-icon { font-size: 44px; text-align: center; margin-bottom: 14px; }
 
         @media (max-width: 480px) {
-            .card {
-                padding: 24px 16px;
-            }
-
-            .result-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .rcard.full {
-                grid-column: 1;
-            }
-
-            .quick-row {
-                gap: 8px;
-            }
-
-            .qbtn {
-                min-width: 80px;
-                font-size: 13px;
-            }
-
-            .a11y-bar {
-                justify-content: flex-start;
-            }
+            .card { padding: 24px 16px; }
+            .result-grid { grid-template-columns: 1fr; }
+            .rcard.full { grid-column: 1; }
+            .quick-row { gap: 8px; }
+            .qbtn { min-width: 80px; font-size: 13px; }
+            .a11y-bar { justify-content: flex-start; }
         }
     </style>
 </head>
-
 <body>
 
-    <!-- Skip to main content (keyboard/screen reader) -->
-    <a href="#mainContent" class="skip-link">Skip to main content</a>
+<a href="#mainContent" class="skip-link">Skip to main content</a>
 
-    <!-- Accessibility toolbar -->
-    <div class="a11y-bar" role="toolbar" aria-label="Accessibility options">
-        <span class="a11y-label">ACCESSIBILITY:</span>
-        <button class="a11y-btn" id="btnTheme" onclick="toggleTheme()" aria-pressed="false"
-            title="Toggle light/dark theme">🌙 Dark</button>
-        <button class="a11y-btn" id="btnContrast" onclick="toggleContrast()" aria-pressed="false"
-            title="Toggle high contrast">◐ Contrast</button>
-        <button class="a11y-btn" id="btnLargeText" onclick="toggleLargeText()" aria-pressed="false"
-            title="Increase text size">A+ Text</button>
-        <button class="a11y-btn" id="btnMotion" onclick="toggleMotion()" aria-pressed="false" title="Reduce motion">⏸
-            Motion</button>
+<div class="a11y-bar" role="toolbar" aria-label="Accessibility options">
+    <span class="a11y-label">ACCESSIBILITY:</span>
+    <button class="a11y-btn" id="btnTheme"     aria-pressed="false" title="Toggle light/dark theme">🌙 Dark</button>
+    <button class="a11y-btn" id="btnContrast"  aria-pressed="false" title="Toggle high contrast">◐ Contrast</button>
+    <button class="a11y-btn" id="btnLargeText" aria-pressed="false" title="Increase text size">A+ Text</button>
+    <button class="a11y-btn" id="btnMotion"    aria-pressed="false" title="Reduce motion">⏸ Motion</button>
+</div>
+
+<div class="topbar">
+    <span class="brand">⬡ CRISISSENSE AI</span>
+    <div style="display:flex;align-items:center;gap:14px">
+        <a href="/dashboard" class="nav-link">MY DASHBOARD</a>
+        <span class="status-dot" role="status" aria-live="polite">
+            <span class="dot" aria-hidden="true"></span> SYSTEM ONLINE
+        </span>
+    </div>
+</div>
+
+<div class="steps" role="list" aria-label="Progress steps">
+    <div class="step-item active" id="si-1" role="listitem" aria-current="step">
+        <div class="step-num" aria-hidden="true">1</div>
+        <div class="step-label">REPORT</div>
+    </div>
+    <div class="step-item" id="si-2" role="listitem">
+        <div class="step-num" aria-hidden="true">2</div>
+        <div class="step-label">LOCATION</div>
+    </div>
+    <div class="step-item" id="si-3" role="listitem">
+        <div class="step-num" aria-hidden="true">3</div>
+        <div class="step-label">PROCESSING</div>
+    </div>
+    <div class="step-item" id="si-4" role="listitem">
+        <div class="step-num" aria-hidden="true">4</div>
+        <div class="step-label">RESULT</div>
+    </div>
+</div>
+
+<main id="mainContent" style="width:100%;display:flex;flex-direction:column;align-items:center;">
+
+    <!-- STEP 1 -->
+    <div class="card active" id="step1" role="region" aria-labelledby="step1-title">
+        <div class="card-tag" aria-hidden="true">STEP 01 / 04 — CRISIS REPORT</div>
+        <h1 id="step1-title">What is the emergency?</h1>
+        <p class="desc">Describe the situation. Use quick buttons below or type in your own words.</p>
+        <div class="quick-label" id="ql-label">QUICK SELECT</div>
+        <div class="quick-row" role="group" aria-labelledby="ql-label">
+            <button class="qbtn" data-fill="fire in building"           aria-label="Quick select: Fire emergency">🔥 Fire</button>
+            <button class="qbtn" data-fill="someone fainted"            aria-label="Quick select: Medical emergency">🚑 Medical</button>
+            <button class="qbtn" data-fill="robbery happening"          aria-label="Quick select: Security emergency">🚨 Security</button>
+            <button class="qbtn" data-fill="road accident injured person" aria-label="Quick select: Accident emergency">🚗 Accident</button>
+        </div>
+        <label for="crisisInput" style="font-weight:700;font-size:14px;display:block;margin-bottom:8px;">
+            Describe the emergency <span style="color:var(--red)" aria-hidden="true">*</span>
+        </label>
+        <textarea id="crisisInput" placeholder="e.g. There is a fire on the second floor..."
+            aria-required="true" aria-describedby="charCount err1" maxlength="500"></textarea>
+        <div class="char-count" id="charCount" aria-live="polite">0 / 500</div>
+        <div class="err" id="err1" role="alert" aria-live="assertive"></div>
+        <button class="btn-primary" id="btnStep2" aria-label="Continue to location step">Continue →</button>
     </div>
 
-    <!-- Top bar -->
-    <div class="topbar">
-        <span class="brand">⬡ CRISISSENSE AI</span>
-        <div style="display:flex;align-items:center;gap:14px">
-            <a href="/dashboard" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-sub);text-decoration:none;letter-spacing:1px;padding:5px 10px;border:1px solid var(--border);border-radius:6px;transition:all .2s" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-sub)'">MY DASHBOARD</a>
-            <span class="status-dot" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span> SYSTEM ONLINE</span>
+    <!-- STEP 2 -->
+    <div class="card" id="step2" role="region" aria-labelledby="step2-title">
+        <div class="card-tag" aria-hidden="true">STEP 02 / 04 — YOUR LOCATION</div>
+        <div class="location-icon" aria-hidden="true">📍</div>
+        <h1 id="step2-title">Where is this happening?</h1>
+        <p class="desc">Enter your location so the nearest response unit can be sent to you.</p>
+        <label for="locationInput" style="font-weight:700;font-size:14px;display:block;margin-bottom:8px;">
+            Your location <span style="color:var(--red)" aria-hidden="true">*</span>
+        </label>
+        <input type="text" id="locationInput" placeholder="e.g. Block B, Sector 14, New Delhi"
+            aria-required="true" aria-describedby="err2" />
+        <div class="err" id="err2" role="alert" aria-live="assertive"></div>
+        <button class="btn-primary" id="btnStep3" aria-label="Dispatch response units">Dispatch Response Units →</button>
+        <button class="btn-ghost"   id="btnBack1" aria-label="Go back to step 1">← Go Back</button>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="card" id="step3" role="region" aria-labelledby="step3-title">
+        <div class="card-tag" aria-hidden="true">STEP 03 / 04 — SYSTEM PROCESSING</div>
+        <h1 id="step3-title">Coordinating response...</h1>
+        <p class="desc">Please wait while the system analyzes and dispatches units.</p>
+        <ul class="process-list" aria-live="polite" aria-label="Processing steps">
+            <li id="p1"><span class="p-icon" aria-hidden="true">⏳</span> Analyzing crisis message</li>
+            <li id="p2"><span class="p-icon" aria-hidden="true">⏳</span> Detecting location &amp; mapping</li>
+            <li id="p3"><span class="p-icon" aria-hidden="true">⏳</span> Finding nearest response unit</li>
+            <li id="p4"><span class="p-icon" aria-hidden="true">⏳</span> Notifying emergency services</li>
+        </ul>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="card" id="step4" role="region" aria-labelledby="step4-title">
+        <div class="card-tag" aria-hidden="true">STEP 04 / 04 — INCIDENT REPORT</div>
+        <h1 id="step4-title">Response Dispatched ✓</h1>
+        <p class="desc">Emergency services have been notified. Stay calm and follow the action below.</p>
+        <div class="crisis-id" id="crisisId" aria-label="Crisis ID">CRISIS ID: —</div>
+        <div class="result-grid" id="resultGrid" aria-live="polite"></div>
+        <div class="dispatch-box" id="dispatchBox"></div>
+        <div class="action-box" id="actionBox" style="display:none">
+            <div class="ab-label">👉 SUGGESTED ACTION</div>
+            <div class="ab-text" id="actionText"></div>
+        </div>
+        <button class="btn-primary" id="btnReset" aria-label="Start over and report another emergency">🔄 Report Another Emergency</button>
+        <div class="reports-toggle">
+            <button id="reportsToggleBtn" aria-expanded="false">VIEW ALL STORED REPORTS</button>
         </div>
     </div>
 
-    <!-- Step indicator -->
-    <div class="steps" role="list" aria-label="Progress steps">
-        <div class="step-item active" id="si-1" role="listitem" aria-current="step">
-            <div class="step-num" aria-hidden="true">1</div>
-            <div class="step-label">REPORT</div>
-        </div>
-        <div class="step-item" id="si-2" role="listitem">
-            <div class="step-num" aria-hidden="true">2</div>
-            <div class="step-label">LOCATION</div>
-        </div>
-        <div class="step-item" id="si-3" role="listitem">
-            <div class="step-num" aria-hidden="true">3</div>
-            <div class="step-label">PROCESSING</div>
-        </div>
-        <div class="step-item" id="si-4" role="listitem">
-            <div class="step-num" aria-hidden="true">4</div>
-            <div class="step-label">RESULT</div>
-        </div>
-    </div>
+</main>
 
-    <main id="mainContent" style="width:100%;display:flex;flex-direction:column;align-items:center;">
+<div class="reports-box" id="reportsBox" aria-live="polite">
+    <div id="reportsList"></div>
+</div>
 
-        <!-- ── STEP 1 ── -->
-        <div class="card active" id="step1" role="region" aria-labelledby="step1-title">
-            <div class="card-tag" aria-hidden="true">STEP 01 / 04 — CRISIS REPORT</div>
-            <h1 id="step1-title">What is the emergency?</h1>
-            <p class="desc">Describe the situation. Use quick buttons below or type in your own words.</p>
+<script>
+// ─── constants ────────────────────────────────────────────────────────────────
 
-            <div class="quick-label" id="ql-label">QUICK SELECT</div>
-            <div class="quick-row" role="group" aria-labelledby="ql-label">
-                <button class="qbtn" onclick="quickFill('fire in building')"
-                    aria-label="Quick select: Fire emergency">🔥 Fire</button>
-                <button class="qbtn" onclick="quickFill('someone fainted')"
-                    aria-label="Quick select: Medical emergency">🚑 Medical</button>
-                <button class="qbtn" onclick="quickFill('robbery happening')"
-                    aria-label="Quick select: Security emergency">🚨 Security</button>
-                <button class="qbtn" onclick="quickFill('road accident injured person')"
-                    aria-label="Quick select: Accident emergency">🚗 Accident</button>
-            </div>
+const FALLBACK_STEPS = {
+    FIRE: [
+        "Evacuate the building immediately using stairs",
+        "Stay low to avoid smoke inhalation",
+        "Do not use elevators",
+        "Alert others nearby",
+        "Call fire emergency services",
+    ],
+    MEDICAL: [
+        "Check if the person is responsive",
+        "Call ambulance immediately",
+        "Keep them in a safe position",
+        "Do not give food or water if unconscious",
+        "Stay with them until help arrives",
+    ],
+    SECURITY: [
+        "Move to a safe and populated area",
+        "Avoid confrontation",
+        "Call police immediately",
+        "Stay alert and aware of surroundings",
+        "Seek help from nearby people",
+    ],
+};
 
-            <label for="crisisInput" style="font-weight:700;font-size:14px;display:block;margin-bottom:8px;">Describe
-                the emergency <span style="color:var(--red)">*</span></label>
-            <textarea id="crisisInput" placeholder="e.g. There is a fire on the second floor..." aria-required="true"
-                aria-describedby="charCount err1" maxlength="500" oninput="updateChar()"></textarea>
-            <div class="char-count" id="charCount" aria-live="polite">0 / 500</div>
+const DISPATCH_UNITS = {
+    FIRE:     { icon: "🚒", label: "Fire brigade alerted",            status: "✓ DISPATCHED" },
+    MEDICAL:  { icon: "🚑", label: "Ambulance dispatched",            status: "✓ EN ROUTE"   },
+    SECURITY: { icon: "🚔", label: "Police notified",                 status: "✓ DISPATCHED" },
+    DEFAULT:  { icon: "🆘", label: "General emergency services alerted", status: "✓ NOTIFIED" },
+};
 
-            <div class="err" id="err1" role="alert" aria-live="assertive"></div>
-            <button class="btn-primary" onclick="goStep2()" aria-label="Continue to location step">Continue →</button>
-        </div>
+// ─── state ────────────────────────────────────────────────────────────────────
 
-        <!-- ── STEP 2 ── -->
-        <div class="card" id="step2" role="region" aria-labelledby="step2-title">
-            <div class="card-tag" aria-hidden="true">STEP 02 / 04 — YOUR LOCATION</div>
-            <div class="location-icon" aria-hidden="true">📍</div>
-            <h1 id="step2-title">Where is this happening?</h1>
-            <p class="desc">Enter your location so the nearest response unit can be sent to you.</p>
+const state = { crisisText: "", locationText: "", aiOutput: "", submitting: false };
 
-            <label for="locationInput" style="font-weight:700;font-size:14px;display:block;margin-bottom:8px;">Your
-                location <span style="color:var(--red)">*</span></label>
-            <input type="text" id="locationInput" placeholder="e.g. Block B, Sector 14, New Delhi" aria-required="true"
-                aria-describedby="err2" />
+// ─── a11y toggles ─────────────────────────────────────────────────────────────
 
-            <div class="err" id="err2" role="alert" aria-live="assertive"></div>
-            <button class="btn-primary" onclick="goStep3()" aria-label="Dispatch response units">Dispatch Response Units
-                →</button>
-            <button class="btn-ghost" onclick="goBack(1)" aria-label="Go back to step 1">← Go Back</button>
-        </div>
+const a11y = {
+    isDark:         true,
+    isContrast:     false,
+    isLargeText:    false,
+    isReduceMotion: false,
 
-        <!-- ── STEP 3 ── -->
-        <div class="card" id="step3" role="region" aria-labelledby="step3-title">
-            <div class="card-tag" aria-hidden="true">STEP 03 / 04 — SYSTEM PROCESSING</div>
-            <h1 id="step3-title">Coordinating response...</h1>
-            <p class="desc">Please wait while the system analyzes and dispatches units.</p>
+    setDataAccess(tokens) {
+        document.documentElement.setAttribute("data-access", tokens.join(" ").trim());
+    },
 
-            <ul class="process-list" aria-live="polite" aria-label="Processing steps">
-                <li id="p1"><span class="p-icon" aria-hidden="true">⏳</span> Analyzing crisis message</li>
-                <li id="p2"><span class="p-icon" aria-hidden="true">⏳</span> Detecting location &amp; mapping</li>
-                <li id="p3"><span class="p-icon" aria-hidden="true">⏳</span> Finding nearest response unit</li>
-                <li id="p4"><span class="p-icon" aria-hidden="true">⏳</span> Notifying emergency services</li>
-            </ul>
-        </div>
+    getTokens() {
+        return (document.documentElement.getAttribute("data-access") || "").split(" ").filter(Boolean);
+    },
 
-        <!-- ── STEP 4 ── -->
-        <div class="card" id="step4" role="region" aria-labelledby="step4-title">
-            <div class="card-tag" aria-hidden="true">STEP 04 / 04 — INCIDENT REPORT</div>
-            <h1 id="step4-title">Response Dispatched ✓</h1>
-            <p class="desc">Emergency services have been notified. Stay calm and follow the action below.</p>
+    toggleToken(token) {
+        const tokens = this.getTokens();
+        const idx = tokens.indexOf(token);
+        idx === -1 ? tokens.push(token) : tokens.splice(idx, 1);
+        this.setDataAccess(tokens);
+    },
 
-            <div class="crisis-id" id="crisisId" aria-label="Crisis ID">CRISIS ID: —</div>
+    pressBtn(id, active) {
+        const btn = document.getElementById(id);
+        btn.setAttribute("aria-pressed", active);
+        btn.classList.toggle("on", active);
+    },
+};
 
-            <div class="result-grid" id="resultGrid" aria-live="polite"></div>
-            <div class="dispatch-box" id="dispatchBox"></div>
-            <div class="action-box" id="actionBox" style="display:none">
-                <div class="ab-label">👉 SUGGESTED ACTION</div>
-                <p class="ab-text" id="actionText"></p>
-            </div>
+document.getElementById("btnTheme").addEventListener("click", () => {
+    a11y.isDark = !a11y.isDark;
+    document.documentElement.setAttribute("data-theme", a11y.isDark ? "dark" : "light");
+    document.getElementById("btnTheme").textContent = a11y.isDark ? "🌙 Dark" : "☀️ Light";
+    a11y.pressBtn("btnTheme", !a11y.isDark);
+    // drop contrast when theme switches — they share CSS var overrides that conflict
+    if (a11y.isContrast) {
+        a11y.isContrast = false;
+        a11y.toggleToken("high-contrast");
+        a11y.pressBtn("btnContrast", false);
+    }
+});
 
-            <button class="btn-primary" onclick="resetAll()" aria-label="Start over and report another emergency">🔄
-                Report Another Emergency</button>
+document.getElementById("btnContrast").addEventListener("click", () => {
+    a11y.isContrast = !a11y.isContrast;
+    a11y.toggleToken("high-contrast");
+    a11y.pressBtn("btnContrast", a11y.isContrast);
+});
 
-            <div class="reports-toggle">
-                <button onclick="toggleReports()" aria-expanded="false" id="reportsToggleBtn">VIEW ALL STORED
-                    REPORTS</button>
-            </div>
-        </div>
+document.getElementById("btnLargeText").addEventListener("click", () => {
+    a11y.isLargeText = !a11y.isLargeText;
+    a11y.toggleToken("large-text");
+    a11y.pressBtn("btnLargeText", a11y.isLargeText);
+});
 
-    </main>
+document.getElementById("btnMotion").addEventListener("click", () => {
+    a11y.isReduceMotion = !a11y.isReduceMotion;
+    let motionStyle = document.getElementById("reduceMotionStyle");
+    if (!motionStyle) {
+        motionStyle = document.createElement("style");
+        motionStyle.id = "reduceMotionStyle";
+        document.head.appendChild(motionStyle);
+    }
+    motionStyle.textContent = a11y.isReduceMotion
+        ? `*, *::before, *::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; }`
+        : "";
+    a11y.pressBtn("btnMotion", a11y.isReduceMotion);
+});
 
-    <!-- Reports -->
-    <div class="reports-box" id="reportsBox" aria-live="polite">
-        <div id="reportsList"></div>
-    </div>
+// ─── quick-fill (data-driven, no inline handlers) ─────────────────────────────
 
-    <script>
-        // ══════════════════════════
-        // Accessibility controls
-        // ══════════════════════════
-        let isSubmitting = false;
-        let isDark = true;
-        let isContrast = false;
-        let isLargeText = false;
-        let isReduceMotion = false;
+document.querySelectorAll(".qbtn[data-fill]").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const ta = document.getElementById("crisisInput");
+        ta.value = btn.dataset.fill;
+        updateCharCount();
+        ta.focus();
+    });
+});
 
-        function toggleTheme() {
-            isDark = !isDark;
-            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-            const btn = document.getElementById('btnTheme');
-            btn.textContent = isDark ? '🌙 Dark' : '☀️ Light';
-            btn.setAttribute('aria-pressed', !isDark);
-            btn.classList.toggle('on', !isDark);
-            // Remove high contrast if switching themes
-            if (isContrast) toggleContrast();
-        }
+// ─── step machine ─────────────────────────────────────────────────────────────
 
-        function toggleContrast() {
-            isContrast = !isContrast;
-            const btn = document.getElementById('btnContrast');
+function showStep(targetStep) {
+    [1, 2, 3, 4].forEach(n => {
+        document.getElementById("step" + n).classList.toggle("active", n === targetStep);
+        const indicator = document.getElementById("si-" + n);
+        indicator.classList.remove("active", "done");
+        indicator.removeAttribute("aria-current");
+        if (n < targetStep) indicator.classList.add("done");
+        if (n === targetStep) { indicator.classList.add("active"); indicator.setAttribute("aria-current", "step"); }
+    });
+    setTimeout(() => {
+        const heading = document.querySelector("#step" + targetStep + " h1");
+        if (heading) { heading.setAttribute("tabindex", "-1"); heading.focus(); }
+    }, 100);
+}
 
-            if (isContrast) {
-                // ADD high-contrast WITHOUT touching theme
-                const current = document.documentElement.getAttribute('data-access') || '';
-                document.documentElement.setAttribute(
-                    'data-access',
-                    (current + ' high-contrast').trim()
-                );
-            } else {
-                // REMOVE only high-contrast
-                const current = document.documentElement.getAttribute('data-access') || '';
-                document.documentElement.setAttribute(
-                    'data-access',
-                    current.replace('high-contrast', '').trim()
-                );
-            }
+function updateCharCount() {
+    const len = document.getElementById("crisisInput").value.length;
+    document.getElementById("charCount").textContent = len + " / 500";
+}
 
-            btn.setAttribute('aria-pressed', isContrast);
-            btn.classList.toggle('on', isContrast);
-        }
-        function toggleLargeText() {
-            isLargeText = !isLargeText;
+document.getElementById("crisisInput").addEventListener("input", updateCharCount);
 
-            let current = document.documentElement.getAttribute('data-access') || '';
-            let classes = current.split(' ').filter(Boolean);
+document.getElementById("crisisInput").addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); advanceToLocation(); }
+});
+document.getElementById("locationInput").addEventListener("keydown", e => {
+    if (e.key === "Enter") dispatchAndAnalyze();
+});
 
-            if (isLargeText) {
-                if (!classes.includes('large-text')) {
-                    classes.push('large-text');
-                }
-            } else {
-                classes = classes.filter(c => c !== 'large-text');
-            }
+document.getElementById("btnStep2").addEventListener("click", advanceToLocation);
+document.getElementById("btnStep3").addEventListener("click", dispatchAndAnalyze);
+document.getElementById("btnBack1").addEventListener("click", () => showStep(1));
+document.getElementById("btnReset").addEventListener("click", resetFlow);
+document.getElementById("reportsToggleBtn").addEventListener("click", toggleReports);
 
-            document.documentElement.setAttribute('data-access', classes.join(' '));
+function advanceToLocation() {
+    state.crisisText = document.getElementById("crisisInput").value.trim();
+    if (!state.crisisText) {
+        document.getElementById("err1").innerHTML = "⚠️ Please describe the emergency first.";
+        document.getElementById("crisisInput").focus();
+        return;
+    }
+    document.getElementById("err1").innerHTML = "";
+    showStep(2);
+    setTimeout(() => document.getElementById("locationInput").focus(), 300);
+}
 
-            const btn = document.getElementById('btnLargeText');
-            btn.setAttribute('aria-pressed', isLargeText);
-            btn.classList.toggle('on', isLargeText);
-        }
+function dispatchAndAnalyze() {
+    if (state.submitting) return;
+    state.locationText = document.getElementById("locationInput").value.trim();
+    if (!state.locationText) {
+        document.getElementById("err2").innerHTML = "⚠️ Please enter your location.";
+        document.getElementById("locationInput").focus();
+        return;
+    }
+    document.getElementById("err2").innerHTML = "";
+    state.submitting = true;
+    showStep(3);
 
-        function toggleMotion() {
-            isReduceMotion = !isReduceMotion;
-            const style = document.getElementById('reduceMotionStyle') || (() => {
-                const s = document.createElement('style');
-                s.id = 'reduceMotionStyle';
-                document.head.appendChild(s);
-                return s;
-            })();
-            style.textContent = isReduceMotion
-                ? `
-                *, *::before, *::after {
-                    animation: none !important;
-                    transition: none !important;
-                    scroll-behavior: auto !important;
-                }
-                `
-                : '';
-            const btn = document.getElementById('btnMotion');
-            btn.setAttribute('aria-pressed', isReduceMotion);
-            btn.classList.toggle('on', isReduceMotion);
-        }
+    [1, 2, 3, 4].forEach(n => {
+        const li = document.getElementById("p" + n);
+        li.classList.remove("active", "done");
+        li.querySelector(".p-icon").textContent = "⏳";
+    });
 
-        // Init dark theme
-        document.documentElement.setAttribute('data-theme', 'dark');
+    const apiRequest = fetch("/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: state.crisisText, location: state.locationText }),
+    }).then(r => r.json());
 
-        // ══════════════════════════
-        // App logic
-        // ══════════════════════════
-        let crisisText = "", locationText = "", aiOutput = "";
-
-        function updateChar() {
-            const v = document.getElementById('crisisInput').value.length;
-            document.getElementById('charCount').textContent = v + ' / 500';
-        }
-
-        function showStep(n) {
-            [1, 2, 3, 4].forEach(i => {
-                document.getElementById('step' + i).classList.toggle('active', i === n);
-                const si = document.getElementById('si-' + i);
-                si.classList.remove('active', 'done');
-                si.removeAttribute('aria-current');
-                if (i < n) si.classList.add('done');
-                if (i === n) { si.classList.add('active'); si.setAttribute('aria-current', 'step'); }
-            });
-            // Focus first heading in new card for screen readers
-            setTimeout(() => {
-                const h = document.querySelector('#step' + n + ' h1');
-                if (h) { h.setAttribute('tabindex', '-1'); h.focus(); }
-            }, 100);
-        }
-
-        function quickFill(text) {
-            const ta = document.getElementById('crisisInput');
-            ta.value = text;
-            updateChar();
-            ta.focus();
-        }
-
-        function goBack(n) { showStep(n); }
-
-        function goStep2() {
-            crisisText = document.getElementById('crisisInput').value.trim();
-            if (!crisisText) {
-                document.getElementById('err1').innerHTML = '⚠️ Please describe the emergency first.';
-                document.getElementById('crisisInput').focus();
-                return;
-            }
-            document.getElementById('err1').innerHTML = '';
-            showStep(2);
-            setTimeout(() => document.getElementById('locationInput').focus(), 300);
-        }
-
-        function goStep3() {
-            console.log("FUNCTION TRIGGERED");
-            if (isSubmitting) return;
-            isSubmitting = true;
-            locationText = document.getElementById('locationInput').value.trim();
-            if (!locationText) {
-                document.getElementById('err2').innerHTML = '⚠️ Please enter your location.';
-                document.getElementById('locationInput').focus();
-                isSubmitting = false; // ✅ ADD THIS
-                return;
-            }
-            document.getElementById('err2').innerHTML = '';
-            showStep(3);
-
-            // Reset process list
-            [1, 2, 3, 4].forEach(i => {
-                const li = document.getElementById('p' + i);
-                li.classList.remove('active', 'done');
-                li.querySelector('.p-icon').textContent = '⏳';
-            });
-
-            // Fire API in parallel with animation
-            const apiPromise = fetch('/analyze', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    text: crisisText,
-                    location: locationText
+    // animation chain kicks off immediately; API resolves in parallel
+    runProcessStep(1, "🔍", 600, () =>
+        runProcessStep(2, "🗺️", 1200, () =>
+            runProcessStep(3, "📡", 1900, () =>
+                runProcessStep(4, "📞", 2600, () => {
+                    apiRequest
+                        .then(payload => {
+                            state.aiOutput = payload.output || "";
+                            renderIncidentResult();
+                            showStep(4);
+                        })
+                        .catch(err => console.error("analyze_request_failed", err))
+                        .finally(() => { state.submitting = false; });
                 })
-            }).then(r => r.json());
+            )
+        )
+    );
+}
 
-            animateProcess(1, '🔍', 600,
-                () => animateProcess(2, '🗺️', 1200,
-                    () => animateProcess(3, '📡', 1900,
-                        () => animateProcess(4, '📞', 2600,
-                            () => {
-                            apiPromise
-                            .then(data => {
-                                aiOutput = data.output || '';
-                                renderResult();
-                                showStep(4);
+function runProcessStep(n, completedIcon, delayMs, onComplete) {
+    setTimeout(() => {
+        const li = document.getElementById("p" + n);
+        li.classList.add("active");
+        li.querySelector(".p-icon").textContent = "⚡";
+        setTimeout(() => {
+            li.classList.remove("active");
+            li.classList.add("done");
+            li.querySelector(".p-icon").textContent = completedIcon;
+            onComplete?.();
+        }, 550);
+    }, delayMs);
+}
 
-                                if (data.redirect) {
-                                    window.location.href = data.redirect;
-                                }
+// ─── result rendering ─────────────────────────────────────────────────────────
 
-                                isSubmitting = false;
-                            })
-                            .catch(() => {
-                                isSubmitting = false;
-                            });
-                            }))));
-        }
+function parseSeverityBadge(rawValue) {
+    const normalized = (rawValue || "UNKNOWN").toUpperCase();
+    const icon = normalized === "HIGH" ? "▲" : normalized === "MEDIUM" ? "◆" : normalized === "LOW" ? "▼" : "●";
+    const cls  = normalized === "HIGH" ? "badge-high" : normalized === "MEDIUM" ? "badge-medium" : normalized === "LOW" ? "badge-low" : "badge-info";
+    return `<span class="badge ${cls}">${icon} ${normalized}</span>`;
+}
 
-        function animateProcess(n, doneIcon, delay, cb) {
-            setTimeout(() => {
-                const li = document.getElementById('p' + n);
-                li.classList.add('active');
-                li.querySelector('.p-icon').textContent = '⚡';
-                setTimeout(() => {
-                    li.classList.remove('active');
-                    li.classList.add('done');
-                    li.querySelector('.p-icon').textContent = doneIcon;
-                    if (cb) cb();
-                }, 550);
-            }, delay);
-        }
+function parseAiOutput(rawOutput) {
+    const parsed = { type: "", urgency: "", panic: "", actionLines: [] };
+    let inActionBlock = false;
+    for (const line of rawOutput.split("\n")) {
+        if      (line.includes("Type:"))            parsed.type    = line.split("Type:")[1].trim();
+        else if (line.includes("Urgency:"))         parsed.urgency = line.split("Urgency:")[1].trim();
+        else if (line.includes("Panic Level:"))     parsed.panic   = line.split("Panic Level:")[1].trim();
+        else if (line.includes("Suggested Action")) inActionBlock  = true;
+        else if (inActionBlock && line.trim())      parsed.actionLines.push(line.trim());
+    }
+    return parsed;
+}
 
-        function renderResult() {
-            const id = 'CRS-' + Date.now().toString().slice(-6);
-            document.getElementById('crisisId').textContent =
-                'CRISIS ID: ' + id + ' · ' + new Date().toLocaleTimeString();
+function resolveActionSteps(actionLines, emergencyType) {
+    if (actionLines.length >= 3) return actionLines;
+    // AI returned too few steps — use hardcoded domain defaults
+    for (const [key, steps] of Object.entries(FALLBACK_STEPS)) {
+        if (emergencyType.includes(key)) return steps.map((s, i) => `${i + 1}. ${s}`);
+    }
+    return actionLines;
+}
 
-            let type = '', urgency = '', panic = '', action = '';
-
-            if (aiOutput) {
-                const lines = aiOutput.split('\n');
-                let inAction = false;
-                const aLines = [];
-
-                for (const line of lines) {
-                    if (line.includes('Type:'))
-                        type = line.split('Type:')[1].trim();
-                    else if (line.includes('Urgency:'))
-                        urgency = line.split('Urgency:')[1].trim();
-                    else if (line.includes('Panic Level:'))
-                        panic = line.split('Panic Level:')[1].trim();
-                    else if (line.includes('Suggested Action:'))
-                        inAction = true;
-                    else if (inAction && line.trim())
-                        aLines.push(line.trim());
-                }
-
-                action = aLines.join('\n'); // IMPORTANT
-            }
-
-            if (!type) type = 'UNKNOWN';
-            if (!urgency) urgency = 'UNKNOWN';
-            if (!panic) panic = 'UNKNOWN';
-
-            function badge(val) {
-                const v = val.toUpperCase();
-                const icon = v === 'HIGH' ? '▲' : v === 'MEDIUM' ? '◆' : v === 'LOW' ? '▼' : '●';
-                const cls = v === 'HIGH' ? 'badge-high' :
-                    v === 'MEDIUM' ? 'badge-medium' :
-                        v === 'LOW' ? 'badge-low' : 'badge-info';
-
-                return `<span class="badge ${cls}">${icon} ${val}</span>`;
-            }
-
-            document.getElementById('resultGrid').innerHTML = `
-        <div class="rcard full">
-            <div class="rc-label">📍 LOCATION</div>
-            <div class="rc-value">${locationText}</div>
-        </div>
-        <div class="rcard">
-            <div class="rc-label">🚨 EMERGENCY TYPE</div>
-            <div class="rc-value">${badge(type)}</div>
-        </div>
-        <div class="rcard">
-            <div class="rc-label">⚡ URGENCY</div>
-            <div class="rc-value">${badge(urgency)}</div>
-        </div>
-        <div class="rcard">
-            <div class="rc-label">😨 PANIC</div>
-            <div class="rc-value">${badge(panic)}</div>
-        </div>
-    `;
-
-            const typeClean = type.toUpperCase();
-
-            let rows = `
+function buildDispatchRows(emergencyType) {
+    const unitKey = Object.keys(DISPATCH_UNITS).find(k => emergencyType.includes(k)) || "DEFAULT";
+    const unit = DISPATCH_UNITS[unitKey];
+    return `
         <div class="dispatch-row">
             <span class="di">🏥</span>
             <span class="dt">Nearest response unit notified</span>
             <span class="ds ds-ok">✓ NOTIFIED</span>
+        </div>
+        <div class="dispatch-row">
+            <span class="di">${unit.icon}</span>
+            <span class="dt">${unit.label}</span>
+            <span class="ds ds-ok">${unit.status}</span>
+        </div>
+        <div class="dispatch-row">
+            <span class="di">📞</span>
+            <span class="dt">Calling emergency services...</span>
+            <span class="ds ds-active">⟳ ACTIVE</span>
+        </div>`;
+}
+
+function renderIncidentResult() {
+    const incidentId = "CRS-" + Date.now().toString().slice(-6);
+    document.getElementById("crisisId").textContent =
+        `CRISIS ID: ${incidentId} · ${new Date().toLocaleTimeString()}`;
+
+    const { type, urgency, panic, actionLines } = parseAiOutput(state.aiOutput);
+    const emergencyType = (type || "UNKNOWN").toUpperCase();
+
+    document.getElementById("resultGrid").innerHTML = `
+        <div class="rcard full">
+            <div class="rc-label">📍 LOCATION</div>
+            <div class="rc-value">${state.locationText}</div>
+        </div>
+        <div class="rcard">
+            <div class="rc-label">🚨 EMERGENCY TYPE</div>
+            <div class="rc-value">${parseSeverityBadge(emergencyType)}</div>
+        </div>
+        <div class="rcard">
+            <div class="rc-label">⚡ URGENCY</div>
+            <div class="rc-value">${parseSeverityBadge(urgency)}</div>
+        </div>
+        <div class="rcard">
+            <div class="rc-label">😨 PANIC</div>
+            <div class="rc-value">${parseSeverityBadge(panic)}</div>
         </div>`;
 
-            if (typeClean.includes('FIRE'))
-                rows += `<div class="dispatch-row"><span class="di">🚒</span><span class="dt">Fire brigade alerted</span><span class="ds ds-ok">✓ DISPATCHED</span></div>`;
-            else if (typeClean.includes('MEDICAL'))
-                rows += `<div class="dispatch-row"><span class="di">🚑</span><span class="dt">Ambulance dispatched</span><span class="ds ds-ok">✓ EN ROUTE</span></div>`;
-            else if (typeClean.includes('SECURITY'))
-                rows += `<div class="dispatch-row"><span class="di">🚔</span><span class="dt">Police notified</span><span class="ds ds-ok">✓ DISPATCHED</span></div>`;
-            else
-                rows += `<div class="dispatch-row"><span class="di">🆘</span><span class="dt">General emergency services alerted</span><span class="ds ds-ok">✓ NOTIFIED</span></div>`;
+    document.getElementById("dispatchBox").innerHTML =
+        `<div class="dispatch-header">DISPATCH STATUS</div>` + buildDispatchRows(emergencyType);
 
-            rows += `<div class="dispatch-row"><span class="di">📞</span><span class="dt">Calling emergency services...</span><span class="ds ds-active">⟳ ACTIVE</span></div>`;
+    const resolvedSteps = resolveActionSteps(actionLines, emergencyType);
+    if (resolvedSteps.length) {
+        document.getElementById("actionText").innerHTML = resolvedSteps.map(line => {
+            const numbered = line.match(/^(\d+)[\.\)]\s*(.*)/);
+            return numbered
+                ? `<div class="step-action"><span class="step-num-badge">${numbered[1]}</span><span class="step-action-text">${numbered[2]}</span></div>`
+                : `<p style="margin-bottom:8px">${line}</p>`;
+        }).join("");
+        document.getElementById("actionBox").style.display = "block";
+    } else {
+        document.getElementById("actionBox").style.display = "none";
+    }
+}
 
-            document.getElementById('dispatchBox').innerHTML =
-                `<div class="dispatch-header">DISPATCH STATUS</div>` + rows;
+// ─── reset & reports ──────────────────────────────────────────────────────────
 
-            // ===== STEP ACTION RENDER =====
-            if (action) {
-                let steps = action.split('\n').filter(s => s.trim());
+function resetFlow() {
+    document.getElementById("crisisInput").value  = "";
+    document.getElementById("locationInput").value = "";
+    updateCharCount();
+    Object.assign(state, { crisisText: "", locationText: "", aiOutput: "", submitting: false });
+    document.getElementById("reportsBox").style.display = "none";
+    document.getElementById("reportsToggleBtn").setAttribute("aria-expanded", "false");
+    showStep(1);
+}
 
-                // 🔥 If AI gives weak or missing steps → override with smart defaults
-                if (steps.length < 3) {
-                    if (typeClean.includes('FIRE')) {
-                        steps = [
-                            "1. Evacuate the building immediately using stairs",
-                            "2. Stay low to avoid smoke inhalation",
-                            "3. Do not use elevators",
-                            "4. Alert others nearby",
-                            "5. Call fire emergency services"
-                        ];
-                    }
-                    else if (typeClean.includes('MEDICAL')) {
-                        steps = [
-                            "1. Check if the person is responsive",
-                            "2. Call ambulance immediately",
-                            "3. Keep them in a safe position",
-                            "4. Do not give food or water if unconscious",
-                            "5. Stay with them until help arrives"
-                        ];
-                    }
-                    else if (typeClean.includes('SECURITY')) {
-                        steps = [
-                            "1. Move to a safe and populated area",
-                            "2. Avoid confrontation",
-                            "3. Call police immediately",
-                            "4. Stay alert and aware of surroundings",
-                            "5. Seek help from nearby people"
-                        ];
-                    }
-                }
+function toggleReports() {
+    const box     = document.getElementById("reportsBox");
+    const btn     = document.getElementById("reportsToggleBtn");
+    const visible = box.style.display === "block";
+    if (!visible) fetchAndRenderReports();
+    box.style.display = visible ? "none" : "block";
+    btn.setAttribute("aria-expanded", String(!visible));
+}
 
-                const stepsHTML = steps.map(step => {
-                    const match = step.match(/^(\d+)[\.\)]\s*(.*)/);
-
-                    if (match) {
-                        return `
-                <div class="step-action">
-                    <span class="step-num-badge">${match[1]}</span>
-                    <span class="step-action-text">${match[2]}</span>
-                </div>`;
-                    }
-
-                    return `<p style="margin-bottom:8px">${step}</p>`;
-                }).join('');
-
-                document.getElementById('actionText').innerHTML = stepsHTML;
-                document.getElementById('actionBox').style.display = 'block';
-
-            } else {
-                document.getElementById('actionBox').style.display = 'none';
+function fetchAndRenderReports() {
+    const list = document.getElementById("reportsList");
+    list.innerHTML = `<p style="color:var(--text-sub);font-size:12px;font-family:'Share Tech Mono',monospace;padding:10px 0">LOADING...</p>`;
+    fetch("/reports")
+        .then(r => r.json())
+        .then(({ reports }) => {
+            if (!reports?.length) {
+                list.innerHTML = `<p style="color:var(--text-sub);font-size:12px;font-family:'Share Tech Mono',monospace;padding:10px 0">NO REPORTS STORED YET</p>`;
+                return;
             }
-        }
-        function resetAll() {
-            document.getElementById('crisisInput').value = '';
-            document.getElementById('locationInput').value = '';
-            updateChar();
-            crisisText = ''; locationText = ''; aiOutput = '';
-            document.getElementById('reportsBox').style.display = 'none';
-            document.getElementById('reportsToggleBtn').setAttribute('aria-expanded', 'false');
-            showStep(1);
-        }
-
-        function toggleReports() {
-            const box = document.getElementById('reportsBox');
-            const btn = document.getElementById('reportsToggleBtn');
-            const visible = box.style.display === 'block';
-            if (!visible) loadReports();
-            box.style.display = visible ? 'none' : 'block';
-            btn.setAttribute('aria-expanded', !visible);
-        }
-
-        function loadReports() {
-            const list = document.getElementById('reportsList');
-            list.innerHTML = `<p style="color:var(--text-sub);font-size:12px;font-family:'Share Tech Mono',monospace;padding:10px 0">LOADING...</p>`;
-            fetch('/reports')
-                .then(r => r.json())
-                .then(data => {
-                    if (!data.reports || data.reports.length === 0) {
-                        list.innerHTML = `<p style="color:var(--text-sub);font-size:12px;font-family:'Share Tech Mono',monospace;padding:10px 0">NO REPORTS STORED YET</p>`;
-                        return;
-                    }
-                    list.innerHTML = '';
-                    [...data.reports].reverse().forEach(r => {
-                        const d = document.createElement('div');
-                        d.className = 'report-card';
-                        d.innerHTML = `<strong>${r.timestamp}</strong>  ·  TYPE: <strong>${r.type}</strong>  ·  URGENCY: <strong>${r.urgency}</strong><br/>${r.message}`;
-                        list.appendChild(d);
-                    });
-                })
-                .catch(() => {
-                    list.innerHTML = `<p style="color:var(--red);font-size:12px;font-family:'Share Tech Mono',monospace">FAILED TO LOAD REPORTS</p>`;
-                });
-        }
-
-        // Keyboard navigation
-        document.getElementById('crisisInput').addEventListener('keydown', e => {
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); goStep2(); }
+            list.innerHTML = "";
+            [...reports].reverse().forEach(report => {
+                const card = document.createElement("div");
+                card.className = "report-card";
+                card.innerHTML = `<strong>${report.timestamp}</strong> · TYPE: <strong>${report.type}</strong> · URGENCY: <strong>${report.urgency}</strong><br/>${report.message}`;
+                list.appendChild(card);
+            });
+        })
+        .catch(() => {
+            list.innerHTML = `<p style="color:var(--red);font-size:12px;font-family:'Share Tech Mono',monospace">FAILED TO LOAD REPORTS</p>`;
         });
-        document.getElementById('locationInput').addEventListener('keydown', e => {
-            if (e.key === 'Enter') goStep3();
-        });
-    </script>
-
+}
+</script>
 </body>
-
 </html>
